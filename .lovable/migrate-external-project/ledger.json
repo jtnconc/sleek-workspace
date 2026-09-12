@@ -4,8 +4,8 @@
       "capability": "code",
       "source": "github:jtnconc/sleek-workspace-clone",
       "outcome": "migrate",
-      "status": "in_progress",
-      "next_action": "Copy source files into project root and install dependencies"
+      "status": "verified",
+      "next_action": "Build passed; preview is live"
     },
     {
       "capability": "schema",
@@ -25,7 +25,7 @@
       "capability": "auth",
       "source": "github:jtnconc/sleek-workspace-clone",
       "outcome": "preserve",
-      "status": "pending",
+      "status": "verified",
       "next_action": "Local PIN auth stored in browser localStorage/sessionStorage"
     },
     {
