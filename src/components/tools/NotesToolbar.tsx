@@ -140,7 +140,7 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
   };
 
   const formattingPanel = (fromOverflow: boolean) => (
-    <div className="w-56 space-y-3 p-3">
+    <div className="w-56 max-w-full space-y-3 p-3">
       <div className="space-y-1.5">
         <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
           Highlight
@@ -173,7 +173,7 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
         <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
           Text color
         </p>
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
           {COLORS.map((c) => (
             <button
               key={c.value}
