@@ -166,7 +166,8 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
                 const apply = () => applyNotesHighlight(h.value, h.dot);
-                fromOverflow ? runOverflowAction(apply) : apply();
+                if (fromOverflow) runOverflowAction(apply);
+                else apply();
               }}
               className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-secondary"
             >
@@ -194,7 +195,8 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
                 const apply = () => execNotesCommand("foreColor", c.value);
-                fromOverflow ? runOverflowAction(apply) : apply();
+                if (fromOverflow) runOverflowAction(apply);
+                else apply();
               }}
               className="size-5 rounded-full border border-border transition-transform hover:scale-110"
               style={{ backgroundColor: c.value }}
@@ -208,7 +210,8 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           const openPicker = () => fileRef.current?.click();
-          fromOverflow ? runOverflowAction(openPicker) : openPicker();
+          if (fromOverflow) runOverflowAction(openPicker);
+          else openPicker();
         }}
         className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-secondary"
       >
