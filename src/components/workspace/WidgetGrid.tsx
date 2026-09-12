@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, type MotionStyle } from "framer-motion";
 import { useWorkspace, isSizeLocked } from "@/workspace/store";
 import type { Widget, WidgetSize } from "@/workspace/types";
 import { cn } from "@/lib/utils";
@@ -125,7 +125,7 @@ export function WidgetGrid() {
     if (!row || !measure) return;
 
     const recalculate = () => {
-      const availableWidth = row.clientWidth;
+      const availableWidth = Math.max(0, row.clientWidth - 8);
       const requiredTextWidth = measure.scrollWidth;
       if (requiredTextWidth <= availableWidth) {
         setMinimizedLayout("text");
@@ -143,7 +143,6 @@ export function WidgetGrid() {
 
     const observer = new ResizeObserver(recalculate);
     observer.observe(row);
-    observer.observe(measure);
     recalculate();
     const frame = requestAnimationFrame(recalculate);
 
@@ -316,59 +315,59 @@ export function WidgetGrid() {
           )}
         >
           <AnimatePresence initial={false} mode="popLayout">
-          {(minimizedLayout === "text"
-            ? ordered
-            : [...baseWidgets, ...extraWidgets.slice(0, visibleExtraCount)]
-          ).map((w) => {
-          const Icon = widgetIcon(w.type, w.icon);
-          const pulse = pulses[w.id];
-          const alertPhase = widgetAlertPhase(w, alertTick);
+            {(minimizedLayout === "text"
+              ? ordered
+              : [...baseWidgets, ...extraWidgets.slice(0, visibleExtraCount)]
+            ).map((w) => {
+              const Icon = widgetIcon(w.type, w.icon);
+              const pulse = pulses[w.id];
+              const alertPhase = widgetAlertPhase(w, alertTick);
 
-          return (
-            <motion.button
-              key={w.id}
-              layout
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => activate(w.id)}
-              aria-label={minimizedLayout === "icon" ? w.title : undefined}
-              title={minimizedLayout === "icon" ? w.title : undefined}
-              className={cn(
-                "group relative flex h-9 shrink-0 items-center justify-center overflow-visible rounded-full border border-border bg-surface shadow-desk transition-[width,padding,gap,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-lift",
-                minimizedLayout === "text" ? "w-auto gap-2 px-3.5" : "w-9 gap-0 px-0",
-                pulse && "widget-glow",
-                alertPhase === "due" && "pill-alert-pulse",
-              )}
-              style={{
-                ...(w.type === "sticky" ? { backgroundColor: tintVar(w.tint) } : {}),
-                ...(alertPhase === "due" ? { "--pulse-color": accentVar(w.accent) } : {}),
-              } as React.CSSProperties}
-            >
-              <Icon
+              return (
+                <motion.button
+                  key={w.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => activate(w.id)}
+                  aria-label={minimizedLayout === "icon" ? w.title : undefined}
+                  title={minimizedLayout === "icon" ? w.title : undefined}
                 className={cn(
-                  "size-[15px] shrink-0 transition-colors",
-                  alertPhase === "pre" && "due-clock-inline",
-                )}
-                style={{ color: accentVar(w.accent) }}
-              />
-              <span
-                className={cn(
-                  "label-xs overflow-hidden transition-[max-width,opacity] duration-300 group-hover:text-foreground",
-                  minimizedLayout === "text" ? "max-w-40 opacity-100" : "max-w-0 opacity-0",
-                )}
-              >
-                {w.title}
-              </span>
-              {pulse ? (
-                <span className="absolute right-0 top-0 z-10 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary px-1.5 py-[1px] text-[10px] font-semibold text-primary-foreground">
-                  +{pulse}
-                </span>
-              ) : null}
-            </motion.button>
-          );
-        })}
+                    "group relative flex h-9 shrink-0 items-center justify-center overflow-visible rounded-full border border-border bg-surface shadow-desk transition-[width,padding,gap,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-lift",
+                    minimizedLayout === "text" ? "w-auto gap-2 px-3.5" : "w-9 gap-0 px-0",
+                    pulse && "widget-glow",
+                    alertPhase === "due" && "pill-alert-pulse",
+                  )}
+                  style={{
+                    ...(w.type === "sticky" ? { backgroundColor: tintVar(w.tint) } : {}),
+                    ...(alertPhase === "due" ? { "--pulse-color": accentVar(w.accent) } : {}),
+                  } as MotionStyle}
+                >
+                  <Icon
+                    className={cn(
+                      "size-[15px] shrink-0 transition-colors",
+                      alertPhase === "pre" && "due-clock-inline",
+                    )}
+                    style={{ color: accentVar(w.accent) }}
+                  />
+                  <span
+                    className={cn(
+                      "label-xs overflow-hidden transition-[max-width,opacity] duration-300 group-hover:text-foreground",
+                      minimizedLayout === "text" ? "max-w-40 opacity-100" : "max-w-0 opacity-0",
+                    )}
+                  >
+                    {w.title}
+                  </span>
+                  {pulse ? (
+                    <span className="absolute right-0 top-0 z-10 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary px-1.5 py-[1px] text-[10px] font-semibold text-primary-foreground">
+                      +{pulse}
+                    </span>
+                  ) : null}
+                </motion.button>
+              );
+            })}
           </AnimatePresence>
         </div>
       </div>
