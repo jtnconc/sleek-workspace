@@ -1,20 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  BoldIcon,
-  ItalicIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ImagePlus,
-  ChevronsRight,
-  Highlighter,
-  List,
-} from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { BoldIcon, ItalicIcon } from "@heroicons/react/24/outline";
+import { ImagePlus, ChevronsRight, Highlighter, List } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -228,7 +216,12 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
           const Icon = action.icon;
           if (action.key === "formatting") {
             return (
-              <motion.div key={action.key} layout {...entrance(index)} exit={{ opacity: 0, scale: 0.75 }}>
+              <motion.div
+                key={action.key}
+                layout
+                {...entrance(index)}
+                exit={{ opacity: 0, scale: 0.75 }}
+              >
                 <Popover>
                   <PopoverTrigger asChild>
                     <button

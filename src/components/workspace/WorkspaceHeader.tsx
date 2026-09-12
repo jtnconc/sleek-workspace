@@ -67,11 +67,12 @@ export function WorkspaceHeader({
     const switcher = toolSwitcherRef.current;
     if (!row || !switcher) return;
 
-    const actionCount = mode === "tool" && activeTool === "notes"
-      ? 4
-      : mode === "tool" && activeTool === "quote"
-        ? 3
-        : 0;
+    const actionCount =
+      mode === "tool" && activeTool === "notes"
+        ? 4
+        : mode === "tool" && activeTool === "quote"
+          ? 3
+          : 0;
 
     const recalculate = () => {
       if (actionCount === 0) {
@@ -91,7 +92,9 @@ export function WorkspaceHeader({
 
       // Once anything overflows, reserve one action-sized slot for the >> menu.
       const roomBeforeOverflow = toolbarWidth - actionSize - actionGap;
-      const fittingActions = Math.floor((roomBeforeOverflow + actionGap) / (actionSize + actionGap));
+      const fittingActions = Math.floor(
+        (roomBeforeOverflow + actionGap) / (actionSize + actionGap),
+      );
       setVisibleToolbarItems(Math.max(0, Math.min(actionCount - 1, fittingActions)));
     };
 
