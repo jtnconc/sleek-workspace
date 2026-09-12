@@ -308,12 +308,7 @@ export function WidgetGrid() {
           })}
         </div>
 
-        <div
-          className={cn(
-            "flex w-full min-w-0 flex-row flex-nowrap items-center transition-[gap] duration-300",
-            minimizedLayout === "text" ? "gap-2" : "justify-between gap-2",
-          )}
-        >
+        <div className="flex w-full min-w-0 flex-row flex-nowrap items-center gap-2 transition-[gap] duration-300">
           <AnimatePresence initial={false} mode="popLayout">
             {(minimizedLayout === "text"
               ? ordered
@@ -334,9 +329,11 @@ export function WidgetGrid() {
                   onClick={() => activate(w.id)}
                   aria-label={minimizedLayout === "icon" ? w.title : undefined}
                   title={minimizedLayout === "icon" ? w.title : undefined}
-                className={cn(
-                    "group relative flex h-9 shrink-0 items-center justify-center overflow-visible rounded-full border border-border bg-surface shadow-desk transition-[width,padding,gap,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-lift",
-                    minimizedLayout === "text" ? "w-auto gap-2 px-3.5" : "w-9 gap-0 px-0",
+                  className={cn(
+                    "group relative flex h-9 items-center justify-center overflow-visible rounded-full border border-border bg-surface shadow-desk transition-[width,padding,gap,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-lift",
+                    minimizedLayout === "text"
+                      ? "w-auto shrink-0 gap-2 px-3.5"
+                      : "flex-1 basis-0 gap-0 px-0",
                     pulse && "widget-glow",
                     alertPhase === "due" && "pill-alert-pulse",
                   )}

@@ -29,7 +29,10 @@ export function ToolSwitcher() {
                 <button
                   onClick={() => openTool(t.id)}
                   aria-label={t.label}
-                  className="relative flex size-8 items-center justify-center rounded-full"
+                  className={cn(
+                    "relative flex items-center justify-center rounded-full",
+                    active ? "h-8 w-11" : "size-8",
+                  )}
                 >
                   {active && (
                     <motion.div
