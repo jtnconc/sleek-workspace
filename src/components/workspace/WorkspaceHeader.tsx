@@ -127,10 +127,7 @@ export function WorkspaceHeader({
     if (!searchOpen) return;
     const onPointerDown = (e: PointerEvent) => {
       const target = e.target as Node;
-      if (
-        !searchWrapRef.current?.contains(target) &&
-        !toolbarRowRef.current?.contains(target)
-      ) {
+      if (!searchWrapRef.current?.contains(target) && !toolbarRowRef.current?.contains(target)) {
         closeSearch();
       }
     };
