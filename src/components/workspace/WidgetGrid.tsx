@@ -126,7 +126,7 @@ export function WidgetGrid() {
 
     const recalculate = () => {
       const availableWidth = Math.max(0, row.clientWidth - 8);
-      const requiredTextWidth = measure.scrollWidth;
+      const requiredTextWidth = measure.getBoundingClientRect().width;
       if (requiredTextWidth <= availableWidth) {
         setMinimizedLayout("text");
         setVisibleExtraCount(extraWidgets.length);
@@ -292,7 +292,7 @@ export function WidgetGrid() {
         <div
           ref={minimizedMeasureRef}
           aria-hidden="true"
-          className="pointer-events-none invisible absolute left-0 top-0 flex w-max flex-row flex-nowrap gap-2 whitespace-nowrap"
+          className="pointer-events-none invisible fixed -left-[10000px] top-0 flex w-max flex-row flex-nowrap gap-2 whitespace-nowrap"
         >
           {ordered.map((w) => {
             const Icon = widgetIcon(w.type, w.icon);
