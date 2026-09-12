@@ -1,0 +1,277 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FileText, Search, X } from "lucide-react";
+import { widgetIcon, type WidgetIconComponent } from "@/components/workspace/widget-icons";
+import { accentVar } from "@/components/workspace/AccentControl";
+import { useWorkspace } from "@/workspace/store";
+import { SettingsPanel } from "@/components/workspace/SettingsPanel";
+import { ToolSwitcher } from "@/components/workspace/ToolSwitcher";
+import { NotesToolbar } from "@/components/tools/NotesToolbar";
+import { QuoteToolbar } from "@/components/tools/QuoteToolbar";
+import type { WidgetType } from "@/workspace/types";
+import { quoteNumber } from "@/lib/quote-model";
+import { cn } from "@/lib/utils";
+
+const stripHtml = (html: string) =>
+  html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+interface SearchHit {
+  key: string;
+  group: string;
+  text: string;
+  Icon: WidgetIconComponent;
+  color?: string;
+  onOpen: () => void;
+}
+
+interface WorkspaceHeaderProps {
+  quotePreview: boolean;
+  onToggleQuotePreview: () => void;
+  quoteHistoryOpen: boolean;
+  onToggleQuoteHistory: () => void;
+}
+
+export function WorkspaceHeader({
+  quotePreview,
+  onToggleQuotePreview,
+  quoteHistoryOpen,
+  onToggleQuoteHistory,
+}: WorkspaceHeaderProps) {
+  const {
+    mode,
+    activeTool,
+    widgets,
+    openWidget,
+    openTool,
+    quote,
+    quoteHistory,
+    loadQuote,
+    searchQuery,
+    setSearchQuery,
+  } = useWorkspace();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchWrapRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // When History is open on the Quote tool, the search input filters the
+  // History list inline instead of showing the usual results dropdown.
+  const suppressDropdown = activeTool === "quote" && quoteHistoryOpen;
+
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery("");
+  };
+
+  // Leaving the History-filter context (History closes, or the user
+  // navigates away from Quote) should drop any leftover query so History
+  // doesn't reopen pre-filtered by a stale search.
+  useEffect(() => {
+    if (!suppressDropdown) setSearchQuery("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [suppressDropdown]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (!searchWrapRef.current?.contains(e.target as Node)) closeSearch();
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeSearch();
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchOpen]);
+
+  // Global search: matches notes, reminders, tasks, contacts, information
+  // rows and quotations (current + history).
+  const hits = useMemo<SearchHit[]>(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    const out: SearchHit[] = [];
+
+    for (const w of widgets) {
+      const c = w.content;
+      const WIcon = widgetIcon(w.type, w.icon);
+      const wColor = accentVar(w.accent);
+      const push = (text: string) => {
+        const clean = text.trim();
+        if (clean && clean.toLowerCase().includes(q))
+          out.push({
+            key: `${w.id}:${out.length}`,
+            group: w.title,
+            text: clean,
+            Icon: WIcon,
+            color: wColor,
+            onOpen: () => openWidget(w.id, { fromSearch: true }),
+          });
+      };
+      if (c.kind === "reminders" || c.kind === "tasks") {
+        c.items.forEach((i) => push(i.title));
+      } else if (c.kind === "contacts") {
+        c.items.forEach((i) => {
+          const hay = [i.name, i.company, i.email, i.phone].filter(Boolean).join(" · ");
+          if (hay.toLowerCase().includes(q)) push(hay);
+        });
+      } else if (c.kind === "information") {
+        c.items.forEach((i) => push(`${i.label} ${i.value}`));
+      } else if (c.kind === "notes") {
+        c.items.forEach((i) => push(stripHtml(i.text)));
+      }
+    }
+
+    const docs = [quote, ...quoteHistory.filter((h) => h.id !== quote.id)];
+    for (const doc of docs) {
+      const hay = [doc.recipient, doc.company, doc.guest, quoteNumber(doc)].join(" ").toLowerCase();
+      if (hay.includes(q))
+        out.push({
+          key: `quote:${doc.id}`,
+          group: "Quotes",
+          text: `${quoteNumber(doc)} · ${doc.recipient || doc.company || "Quotation"}`,
+          Icon: FileText,
+          onOpen: () => {
+            if (doc.id !== quote.id) loadQuote(doc.id);
+            openTool("quote");
+          },
+        });
+    }
+    return out.slice(0, 10);
+  }, [searchQuery, widgets, quote, quoteHistory, openWidget, openTool, loadQuote]);
+
+  return (
+    <header className="relative z-40 w-full shrink-0 bg-transparent">
+      <div className="mx-auto flex h-14 w-full max-w-[1240px] flex-row flex-nowrap items-center gap-3 px-5">
+        <div className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto overflow-y-visible whitespace-nowrap">
+          <ToolSwitcher />
+
+          {mode === "tool" && activeTool === "notes" && <NotesToolbar />}
+          {mode === "tool" && activeTool === "quote" && (
+            <QuoteToolbar
+              preview={quotePreview}
+              onTogglePreview={onToggleQuotePreview}
+              history={quoteHistoryOpen}
+              onToggleHistory={onToggleQuoteHistory}
+            />
+          )}
+        </div>
+
+        <div
+          ref={searchWrapRef}
+          className="relative z-50 flex shrink-0 items-center overflow-visible"
+        >
+          <div className="relative flex items-center overflow-visible">
+            <div
+              className={cn(
+                "flex h-8 shrink-0 items-center gap-1.5 overflow-hidden rounded-full border border-border bg-surface px-2.5 text-muted-foreground shadow-desk transition-all duration-200 hover:bg-secondary hover:text-foreground",
+                searchOpen ? "w-64" : "w-[92px] cursor-pointer",
+              )}
+              onClick={
+                searchOpen
+                  ? undefined
+                  : () => {
+                      setSearchOpen(true);
+                      requestAnimationFrame(() => searchInputRef.current?.focus());
+                    }
+              }
+              role={searchOpen ? undefined : "button"}
+              tabIndex={searchOpen ? -1 : 0}
+              aria-label={searchOpen ? undefined : "Search"}
+              onKeyDown={
+                searchOpen
+                  ? undefined
+                  : (e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSearchOpen(true);
+                        requestAnimationFrame(() => searchInputRef.current?.focus());
+                      }
+                    }
+              }
+            >
+              {searchOpen ? (
+                <>
+                  <button
+                    type="button"
+                    aria-label="Close search"
+                    onClick={closeSearch}
+                    className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  >
+                    <Search className="size-[18px]" />
+                  </button>
+                  <input
+                    ref={searchInputRef}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search"
+                    className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  />
+                  {searchQuery.trim() && (
+                    <button
+                      type="button"
+                      aria-label="Clear search"
+                      onClick={() => {
+                        setSearchQuery("");
+                        searchInputRef.current?.focus();
+                      }}
+                      className="flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Search className="size-[18px] shrink-0" />
+                  <span className="truncate text-[12px]">Search</span>
+                </>
+              )}
+            </div>
+
+            {!suppressDropdown && searchOpen && searchQuery.trim() && (
+              <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-80 rounded-xl border border-border bg-surface p-2 shadow-lg">
+                <div className="max-h-72 overflow-y-auto px-1 pb-1 pt-1">
+                  {hits.length === 0 ? (
+                    <p className="px-2 py-3 text-sm text-muted-foreground">
+                      No results for &ldquo;{searchQuery.trim()}&rdquo;.
+                    </p>
+                  ) : (
+                    <ul className="space-y-0.5 text-sm">
+                      {hits.map((h) => (
+                        <li key={h.key}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              h.onOpen();
+                              closeSearch();
+                            }}
+                            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-secondary"
+                          >
+                            <h.Icon
+                              className="size-3.5 shrink-0"
+                              strokeWidth={2}
+                              style={h.color ? { color: h.color } : undefined}
+                            />
+                            <span className="min-w-0 flex-1 truncate">{h.text}</span>
+                            <span className="label-xs shrink-0">{h.group}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <SettingsPanel />
+      </div>
+    </header>
+  );
+}
