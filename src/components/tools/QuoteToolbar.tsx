@@ -1,9 +1,16 @@
-import { motion } from "framer-motion";
-import { Download, Eye, History } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronsRight, Download, Eye, History } from "lucide-react";
 import { useWorkspace } from "@/workspace/store";
 import { getHotel } from "@/lib/hotels";
 import { generateQuotePdf } from "@/lib/quote-pdf";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const btn =
@@ -12,13 +19,20 @@ const activeBtn =
   "bg-[rgba(100,116,139,0.15)] text-slate-700 border-transparent hover:bg-[rgba(100,116,139,0.15)] hover:text-slate-700";
 
 interface Props {
+  visibleCount: number;
   preview: boolean;
   onTogglePreview: () => void;
   history: boolean;
   onToggleHistory: () => void;
 }
 
-export function QuoteToolbar({ preview, onTogglePreview, history, onToggleHistory }: Props) {
+export function QuoteToolbar({
+  visibleCount,
+  preview,
+  onTogglePreview,
+  history,
+  onToggleHistory,
+}: Props) {
   const { quote, hotelLogos, archiveQuote, resetQuote } = useWorkspace();
   const selected = quote.hotelId ? getHotel(quote.hotelId) : null;
 
@@ -56,29 +70,83 @@ export function QuoteToolbar({ preview, onTogglePreview, history, onToggleHistor
       active: history,
     },
   ];
+  const visibleButtons = buttons.slice(0, visibleCount);
+  const overflowButtons = buttons.slice(visibleCount);
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div className="flex items-center gap-1.5">
-        {buttons.map((b, index) => (
-          <Tooltip key={b.key}>
-            <TooltipTrigger asChild>
-              <motion.button
-                type="button"
-                aria-label={b.label}
-                disabled={b.disabled}
-                onClick={b.onClick}
-                initial={{ opacity: 0, scale: 0.6 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25, delay: index * 0.04 }}
-                className={cn(btn, b.active && activeBtn)}
-              >
-                <b.icon className="size-[18px]" strokeWidth={2} />
-              </motion.button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">{b.label}</TooltipContent>
-          </Tooltip>
-        ))}
+      <div className="flex shrink-0 items-center gap-1.5">
+        <AnimatePresence initial={false} mode="popLayout">
+          {visibleButtons.map((b, index) => (
+            <motion.div
+              key={b.key}
+              layout
+              initial={{ opacity: 0, scale: 0.75 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.75 }}
+              transition={{ duration: 0.16, delay: index * 0.025 }}
+            >
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label={b.label}
+                    aria-pressed={b.active}
+                    disabled={b.disabled}
+                    onClick={b.onClick}
+                    className={cn(btn, b.active && activeBtn)}
+                  >
+                    <b.icon className="size-[18px]" strokeWidth={2} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">{b.label}</TooltipContent>
+              </Tooltip>
+            </motion.div>
+          ))}
+
+          {overflowButtons.length > 0 && (
+            <motion.div
+              key="quote-overflow"
+              layout
+              initial={{ opacity: 0, scale: 0.75 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.75 }}
+              transition={{ duration: 0.16 }}
+            >
+              <DropdownMenu>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        aria-label="More quotation actions"
+                        className="size-8 rounded-full border-border bg-surface text-muted-foreground shadow-desk hover:bg-secondary hover:text-foreground"
+                      >
+                        <ChevronsRight className="size-[18px]" strokeWidth={2} />
+                      </Button>
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">More actions</TooltipContent>
+                </Tooltip>
+                <DropdownMenuContent align="start" className="min-w-48">
+                  {overflowButtons.map((b) => (
+                    <DropdownMenuItem
+                      key={b.key}
+                      disabled={b.disabled}
+                      onSelect={b.onClick}
+                      className={cn(b.active && "bg-secondary text-foreground")}
+                    >
+                      <b.icon strokeWidth={2} />
+                      <span>{b.label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </TooltipProvider>
   );

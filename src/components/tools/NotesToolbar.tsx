@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   BoldIcon,
   ItalicIcon,
 } from "@heroicons/react/24/outline";
 import {
   ImagePlus,
+  ChevronsRight,
   Highlighter,
   List,
 } from "lucide-react";
@@ -14,12 +15,24 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import {
   execNotesCommand,
   insertNotesImage,
   toggleNotesList,
   applyNotesHighlight,
+  restoreNotesSelection,
+  saveNotesSelection,
 } from "./notes-format";
 
 const COLORS = [
@@ -54,8 +67,13 @@ const entrance = (i: number) => ({
   transition: { type: "spring" as const, stiffness: 400, damping: 25, delay: i * 0.04 },
 });
 
-export function NotesToolbar() {
+interface NotesToolbarProps {
+  visibleCount: number;
+}
+
+export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const [overflowOpen, setOverflowOpen] = useState(false);
   const [active, setActive] = useState({
     bold: false,
     italic: false,
@@ -89,117 +107,219 @@ export function NotesToolbar() {
     reader.readAsDataURL(file);
   };
 
-  return (
-    <div className="flex items-center gap-1.5">
-      <motion.button
-        type="button"
-        aria-label="Bold"
-        aria-pressed={active.bold}
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => toggle("bold")}
-        className={cn(btn, active.bold && activeBtn)}
-        {...entrance(0)}
-      >
-        <BoldIcon className="size-[18px]" strokeWidth={2} />
-      </motion.button>
-      <motion.button
-        type="button"
-        aria-label="Italic"
-        aria-pressed={active.italic}
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => toggle("italic")}
-        className={cn(btn, active.italic && activeBtn)}
-        {...entrance(1)}
-      >
-        <ItalicIcon className="size-[18px]" strokeWidth={2} />
-      </motion.button>
+  const actions = [
+    {
+      key: "bold",
+      label: "Bold",
+      icon: BoldIcon,
+      active: active.bold,
+      onClick: () => toggle("bold"),
+    },
+    {
+      key: "italic",
+      label: "Italic",
+      icon: ItalicIcon,
+      active: active.italic,
+      onClick: () => toggle("italic"),
+    },
+    {
+      key: "list",
+      label: "Bullet list",
+      icon: List,
+      active: active.list,
+      onClick: () => {
+        toggleNotesList();
+        syncActive();
+      },
+    },
+    {
+      key: "formatting",
+      label: "Formatting",
+      icon: Highlighter,
+      active: false,
+      onClick: () => undefined,
+    },
+  ];
+  const visibleActions = actions.slice(0, visibleCount);
+  const overflowActions = actions.slice(visibleCount);
 
-      <motion.button
+  const runOverflowAction = (action: () => void) => {
+    setOverflowOpen(false);
+    requestAnimationFrame(() => {
+      restoreNotesSelection();
+      action();
+    });
+  };
+
+  const formattingPanel = (fromOverflow: boolean) => (
+    <div className="w-56 space-y-3 p-3">
+      <div className="space-y-1.5">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+          Highlight
+        </p>
+        <div className="grid gap-1">
+          {HIGHLIGHTS.map((h) => (
+            <button
+              key={h.value}
+              type="button"
+              aria-label={h.label}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => {
+                const apply = () => applyNotesHighlight(h.value, h.dot);
+                fromOverflow ? runOverflowAction(apply) : apply();
+              }}
+              className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-secondary"
+            >
+              <span
+                className="size-4 rounded-full border border-border"
+                style={{ backgroundColor: h.dot }}
+              />
+              {h.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+          Text color
+        </p>
+        <div className="flex items-center gap-1.5">
+          {COLORS.map((c) => (
+            <button
+              key={c.value}
+              type="button"
+              aria-label={c.label}
+              title={c.label}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => {
+                const apply = () => execNotesCommand("foreColor", c.value);
+                fromOverflow ? runOverflowAction(apply) : apply();
+              }}
+              className="size-5 rounded-full border border-border transition-transform hover:scale-110"
+              style={{ backgroundColor: c.value }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <button
         type="button"
-        aria-label="Bullet list"
-        aria-pressed={active.list}
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
-          toggleNotesList();
-          syncActive();
+          const openPicker = () => fileRef.current?.click();
+          fromOverflow ? runOverflowAction(openPicker) : openPicker();
         }}
-        className={cn(btn, active.list && activeBtn)}
-        {...entrance(2)}
+        className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-secondary"
       >
-        <List className="size-[18px]" strokeWidth={2} />
-      </motion.button>
+        <ImagePlus className="size-[14px]" />
+        Insert image
+      </button>
+    </div>
+  );
 
-      {/* Consolidated: highlight color, text color, insert image — grouped
-          into one popover so the toolbar never overflows/scrolls out of
-          view at narrow widths. */}
-      <Popover>
-        <PopoverTrigger asChild>
-          <motion.button
-            type="button"
-            aria-label="Formatting"
-            onMouseDown={(e) => e.preventDefault()}
-            className={btn}
-            {...entrance(3)}
+  return (
+    <div className="flex shrink-0 items-center gap-1.5">
+      <AnimatePresence initial={false} mode="popLayout">
+        {visibleActions.map((action, index) => {
+          const Icon = action.icon;
+          if (action.key === "formatting") {
+            return (
+              <motion.div key={action.key} layout {...entrance(index)} exit={{ opacity: 0, scale: 0.75 }}>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label={action.label}
+                      onMouseDown={(e) => e.preventDefault()}
+                      className={btn}
+                    >
+                      <Icon className="size-[18px]" strokeWidth={2} />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="start" className="w-auto p-0">
+                    {formattingPanel(false)}
+                  </PopoverContent>
+                </Popover>
+              </motion.div>
+            );
+          }
+
+          return (
+            <motion.button
+              key={action.key}
+              layout
+              type="button"
+              aria-label={action.label}
+              aria-pressed={action.active}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={action.onClick}
+              className={cn(btn, action.active && activeBtn)}
+              {...entrance(index)}
+              exit={{ opacity: 0, scale: 0.75 }}
+            >
+              <Icon className="size-[18px]" strokeWidth={2} />
+            </motion.button>
+          );
+        })}
+
+        {overflowActions.length > 0 && (
+          <motion.div
+            key="notes-overflow"
+            layout
+            initial={{ opacity: 0, scale: 0.75 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.75 }}
+            transition={{ duration: 0.16 }}
           >
-            <Highlighter className="size-[18px]" />
-          </motion.button>
-        </PopoverTrigger>
-        <PopoverContent align="start" className="w-56 space-y-3 p-3">
-          <div className="space-y-1.5">
-            <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-              Highlight
-            </p>
-            <div className="grid gap-1">
-              {HIGHLIGHTS.map((h) => (
-                <button
-                  key={h.value}
+            <DropdownMenu open={overflowOpen} onOpenChange={setOverflowOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button
                   type="button"
-                  aria-label={h.label}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => applyNotesHighlight(h.value, h.dot)}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-secondary"
+                  variant="outline"
+                  size="icon"
+                  aria-label="More notes actions"
+                  onPointerDown={saveNotesSelection}
+                  className="size-8 rounded-full border-border bg-surface text-muted-foreground shadow-desk hover:bg-secondary hover:text-foreground"
                 >
-                  <span
-                    className="size-4 rounded-full border border-border"
-                    style={{ backgroundColor: h.dot }}
-                  />
-                  {h.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-              Text color
-            </p>
-            <div className="flex items-center gap-1.5">
-              {COLORS.map((c) => (
-                <button
-                  key={c.value}
-                  type="button"
-                  aria-label={c.label}
-                  title={c.label}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => execNotesCommand("foreColor", c.value)}
-                  className="size-5 rounded-full border border-border transition-transform hover:scale-110"
-                  style={{ backgroundColor: c.value }}
-                />
-              ))}
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => fileRef.current?.click()}
-            className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-secondary"
-          >
-            <ImagePlus className="size-[14px]" />
-            Insert image
-          </button>
-        </PopoverContent>
-      </Popover>
+                  <ChevronsRight className="size-[18px]" strokeWidth={2} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="min-w-44">
+                {overflowActions.map((action) => {
+                  const Icon = action.icon;
+                  if (action.key === "formatting") {
+                    return (
+                      <DropdownMenuSub key={action.key}>
+                        <DropdownMenuSubTrigger>
+                          <Icon strokeWidth={2} />
+                          <span>{action.label}</span>
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuSubContent className="w-auto p-0">
+                          {formattingPanel(true)}
+                        </DropdownMenuSubContent>
+                      </DropdownMenuSub>
+                    );
+                  }
+                  return (
+                    <DropdownMenuItem
+                      key={action.key}
+                      onSelect={(event) => {
+                        event.preventDefault();
+                        runOverflowAction(action.onClick);
+                      }}
+                      className={cn(action.active && "bg-secondary text-foreground")}
+                    >
+                      <Icon strokeWidth={2} />
+                      <span>{action.label}</span>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <input
         ref={fileRef}

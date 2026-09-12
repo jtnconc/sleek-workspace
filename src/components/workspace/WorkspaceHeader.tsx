@@ -52,12 +52,60 @@ export function WorkspaceHeader({
     setSearchQuery,
   } = useWorkspace();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [visibleToolbarItems, setVisibleToolbarItems] = useState(4);
+  const toolbarRowRef = useRef<HTMLDivElement>(null);
+  const toolSwitcherRef = useRef<HTMLDivElement>(null);
   const searchWrapRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // When History is open on the Quote tool, the search input filters the
   // History list inline instead of showing the usual results dropdown.
   const suppressDropdown = activeTool === "quote" && quoteHistoryOpen;
+
+  useEffect(() => {
+    const row = toolbarRowRef.current;
+    const switcher = toolSwitcherRef.current;
+    if (!row || !switcher) return;
+
+    const actionCount = mode === "tool" && activeTool === "notes"
+      ? 4
+      : mode === "tool" && activeTool === "quote"
+        ? 3
+        : 0;
+
+    const recalculate = () => {
+      if (actionCount === 0) {
+        setVisibleToolbarItems(0);
+        return;
+      }
+
+      const toolbarWidth = Math.max(0, row.clientWidth - switcher.offsetWidth - 12);
+      const actionSize = 32;
+      const actionGap = 6;
+      const fullWidth = actionCount * actionSize + (actionCount - 1) * actionGap;
+
+      if (fullWidth <= toolbarWidth) {
+        setVisibleToolbarItems(actionCount);
+        return;
+      }
+
+      // Once anything overflows, reserve one action-sized slot for the >> menu.
+      const roomBeforeOverflow = toolbarWidth - actionSize - actionGap;
+      const fittingActions = Math.floor((roomBeforeOverflow + actionGap) / (actionSize + actionGap));
+      setVisibleToolbarItems(Math.max(0, Math.min(actionCount - 1, fittingActions)));
+    };
+
+    const observer = new ResizeObserver(recalculate);
+    observer.observe(row);
+    observer.observe(switcher);
+    recalculate();
+    const frame = requestAnimationFrame(recalculate);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [activeTool, mode, searchOpen]);
 
   const closeSearch = () => {
     setSearchOpen(false);
@@ -147,12 +195,20 @@ export function WorkspaceHeader({
   return (
     <header className="relative z-40 w-full shrink-0 bg-transparent">
       <div className="mx-auto flex h-14 w-full max-w-[1240px] flex-row flex-nowrap items-center gap-3 px-5">
-        <div className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto overflow-y-visible whitespace-nowrap">
-          <ToolSwitcher />
+        <div
+          ref={toolbarRowRef}
+          className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden whitespace-nowrap"
+        >
+          <div ref={toolSwitcherRef} className="shrink-0">
+            <ToolSwitcher />
+          </div>
 
-          {mode === "tool" && activeTool === "notes" && <NotesToolbar />}
+          {mode === "tool" && activeTool === "notes" && (
+            <NotesToolbar visibleCount={visibleToolbarItems} />
+          )}
           {mode === "tool" && activeTool === "quote" && (
             <QuoteToolbar
+              visibleCount={visibleToolbarItems}
               preview={quotePreview}
               onTogglePreview={onToggleQuotePreview}
               history={quoteHistoryOpen}
