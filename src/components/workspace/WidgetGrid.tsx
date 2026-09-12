@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useWorkspace, isSizeLocked } from "@/workspace/store";
 import type { Widget, WidgetSize } from "@/workspace/types";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,9 @@ import { widgetIcon } from "./widget-icons";
 const ROW_UNIT = 150;
 /** Vertical gap (px) between grid rows; must match the `gap-3` utility (0.75rem). */
 const ROW_GAP = 12;
+const MINIMIZED_BUTTON_SIZE = 36;
+const MINIMIZED_GAP = 8;
+const BASE_WIDGET_TYPES = new Set(["reminders", "contacts", "information", "tasks", "notes"]);
 
 /** Fixed outer height (px) for a card spanning `h` grid rows, including the
  * inter-row gap that a 2-row card absorbs. */
@@ -106,6 +110,48 @@ export function WidgetGrid() {
   const dragged = useRef<string | null>(null);
   const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
   const gridRef = useRef<HTMLDivElement | null>(null);
+  const minimizedRowRef = useRef<HTMLDivElement | null>(null);
+  const minimizedMeasureRef = useRef<HTMLDivElement | null>(null);
+  const [minimizedLayout, setMinimizedLayout] = useState<"text" | "icon">("icon");
+  const [visibleExtraCount, setVisibleExtraCount] = useState(0);
+
+  const baseWidgets = ordered.filter((widget) => BASE_WIDGET_TYPES.has(widget.type));
+  const extraWidgets = ordered.filter((widget) => !BASE_WIDGET_TYPES.has(widget.type));
+
+  useLayoutEffect(() => {
+    if (!minimized) return;
+    const row = minimizedRowRef.current;
+    const measure = minimizedMeasureRef.current;
+    if (!row || !measure) return;
+
+    const recalculate = () => {
+      const availableWidth = row.clientWidth;
+      const requiredTextWidth = measure.scrollWidth;
+      if (requiredTextWidth <= availableWidth) {
+        setMinimizedLayout("text");
+        setVisibleExtraCount(extraWidgets.length);
+        return;
+      }
+
+      const circleCapacity = Math.max(
+        0,
+        Math.floor((availableWidth + MINIMIZED_GAP) / (MINIMIZED_BUTTON_SIZE + MINIMIZED_GAP)),
+      );
+      setMinimizedLayout("icon");
+      setVisibleExtraCount(Math.max(0, Math.min(extraWidgets.length, circleCapacity - baseWidgets.length)));
+    };
+
+    const observer = new ResizeObserver(recalculate);
+    observer.observe(row);
+    observer.observe(measure);
+    recalculate();
+    const frame = requestAnimationFrame(recalculate);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [minimized, ordered.map((widget) => `${widget.id}:${widget.title}`).join("|")]);
 
   const [alertTick, setAlertTick] = useState(() => new Date());
   useEffect(() => {
@@ -243,24 +289,55 @@ export function WidgetGrid() {
 
   if (minimized)
     return (
-      // Horizontal scroll needs overflow-x-auto, but per the CSS overflow
-      // spec any non-visible x/y pairing forces the *other* axis to auto
-      // too — so overflow-x-auto alone silently clips a badge that sits
-      // outside a pill's edge. Reserve room with padding and keep each
-      // badge's center on the pill's corner (translate by half its own
-      // size) so it always renders inside this scrollable box.
-      <div className="flex w-full min-w-0 flex-row flex-nowrap gap-2 overflow-x-auto whitespace-nowrap p-1 pt-2">
-        {ordered.map((w) => {
+      <div ref={minimizedRowRef} className="relative w-full min-w-0 overflow-visible p-1 pt-2">
+        <div
+          ref={minimizedMeasureRef}
+          aria-hidden="true"
+          className="pointer-events-none invisible absolute left-0 top-0 flex w-max flex-row flex-nowrap gap-2 whitespace-nowrap"
+        >
+          {ordered.map((w) => {
+            const Icon = widgetIcon(w.type, w.icon);
+            return (
+              <span
+                key={w.id}
+                className="flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2"
+              >
+                <Icon className="size-[15px]" />
+                <span className="label-xs">{w.title}</span>
+              </span>
+            );
+          })}
+        </div>
+
+        <div
+          className={cn(
+            "flex w-full min-w-0 flex-row flex-nowrap items-center transition-[gap] duration-300",
+            minimizedLayout === "text" ? "gap-2" : "justify-between gap-2",
+          )}
+        >
+          <AnimatePresence initial={false} mode="popLayout">
+          {(minimizedLayout === "text"
+            ? ordered
+            : [...baseWidgets, ...extraWidgets.slice(0, visibleExtraCount)]
+          ).map((w) => {
           const Icon = widgetIcon(w.type, w.icon);
           const pulse = pulses[w.id];
           const alertPhase = widgetAlertPhase(w, alertTick);
 
           return (
-            <button
+            <motion.button
               key={w.id}
+              layout
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
               onClick={() => activate(w.id)}
+              aria-label={minimizedLayout === "icon" ? w.title : undefined}
+              title={minimizedLayout === "icon" ? w.title : undefined}
               className={cn(
-                "group relative flex shrink-0 items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-2 shadow-desk transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lift",
+                "group relative flex h-9 shrink-0 items-center justify-center overflow-visible rounded-full border border-border bg-surface shadow-desk transition-[width,padding,gap,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-lift",
+                minimizedLayout === "text" ? "w-auto gap-2 px-3.5" : "w-9 gap-0 px-0",
                 pulse && "widget-glow",
                 alertPhase === "due" && "pill-alert-pulse",
               )}
@@ -271,20 +348,29 @@ export function WidgetGrid() {
             >
               <Icon
                 className={cn(
-                  "size-[15px] transition-colors",
+                  "size-[15px] shrink-0 transition-colors",
                   alertPhase === "pre" && "due-clock-inline",
                 )}
                 style={{ color: accentVar(w.accent) }}
               />
-              <span className="label-xs group-hover:text-foreground">{w.title}</span>
+              <span
+                className={cn(
+                  "label-xs overflow-hidden transition-[max-width,opacity] duration-300 group-hover:text-foreground",
+                  minimizedLayout === "text" ? "max-w-40 opacity-100" : "max-w-0 opacity-0",
+                )}
+              >
+                {w.title}
+              </span>
               {pulse ? (
                 <span className="absolute right-0 top-0 z-10 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary px-1.5 py-[1px] text-[10px] font-semibold text-primary-foreground">
                   +{pulse}
                 </span>
               ) : null}
-            </button>
+            </motion.button>
           );
         })}
+          </AnimatePresence>
+        </div>
       </div>
     );
 
