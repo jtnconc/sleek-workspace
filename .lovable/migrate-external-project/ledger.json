@@ -1,0 +1,67 @@
+{
+  "ledger": [
+    {
+      "capability": "code",
+      "source": "github:jtnconc/sleek-workspace-clone",
+      "outcome": "migrate",
+      "status": "in_progress",
+      "next_action": "Copy source files into project root and install dependencies"
+    },
+    {
+      "capability": "schema",
+      "source": "github:jtnconc/sleek-workspace-clone",
+      "outcome": "none",
+      "status": "not_needed",
+      "next_action": "No database schema detected in source"
+    },
+    {
+      "capability": "records",
+      "source": "github:jtnconc/sleek-workspace-clone",
+      "outcome": "none",
+      "status": "not_needed",
+      "next_action": "App uses localStorage; no exported records to import"
+    },
+    {
+      "capability": "auth",
+      "source": "github:jtnconc/sleek-workspace-clone",
+      "outcome": "preserve",
+      "status": "pending",
+      "next_action": "Local PIN auth stored in browser localStorage/sessionStorage"
+    },
+    {
+      "capability": "authorization",
+      "source": "github:jtnconc/sleek-workspace-clone",
+      "outcome": "none",
+      "status": "not_needed",
+      "next_action": "No server-side authorization detected"
+    },
+    {
+      "capability": "storage",
+      "source": "github:jtnconc/sleek-workspace-clone",
+      "outcome": "none",
+      "status": "not_needed",
+      "next_action": "No external storage detected"
+    },
+    {
+      "capability": "public_endpoints",
+      "source": "github:jtnconc/sleek-workspace-clone",
+      "outcome": "none",
+      "status": "not_needed",
+      "next_action": "No public API/webhook routes detected"
+    },
+    {
+      "capability": "third_party_integrations",
+      "source": "github:jtnconc/sleek-workspace-clone",
+      "outcome": "none",
+      "status": "not_needed",
+      "next_action": "No third-party API integrations detected"
+    },
+    {
+      "capability": "secrets",
+      "source": "github:jtnconc/sleek-workspace-clone",
+      "outcome": "none",
+      "status": "not_needed",
+      "next_action": "No environment variables or secrets detected"
+    }
+  ]
+}
