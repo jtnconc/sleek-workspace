@@ -126,7 +126,13 @@ export function WorkspaceHeader({
   useEffect(() => {
     if (!searchOpen) return;
     const onPointerDown = (e: PointerEvent) => {
-      if (!searchWrapRef.current?.contains(e.target as Node)) closeSearch();
+      const target = e.target as Node;
+      if (
+        !searchWrapRef.current?.contains(target) &&
+        !toolbarRowRef.current?.contains(target)
+      ) {
+        closeSearch();
+      }
     };
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeSearch();
