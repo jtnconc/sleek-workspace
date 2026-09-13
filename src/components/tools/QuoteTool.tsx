@@ -1130,7 +1130,7 @@ const toggleItem = (itemId: string) => {
                       onClosePanels?.();
                     }}
                     aria-label={lang === "es" ? "Abrir cotización" : "Open quote"}
-                    className="inline-flex size-7 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                    className="inline-flex size-7 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
                     <PencilSimple size={14} />
                   </button>
@@ -1141,7 +1141,7 @@ const toggleItem = (itemId: string) => {
                       onClosePanels?.();
                     }}
                     aria-label={lang === "es" ? "Duplicar cotización" : "Duplicate quote"}
-                    className="inline-flex size-7 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                    className="inline-flex size-7 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
                     <CopySimple size={14} />
                   </button>
@@ -1153,7 +1153,7 @@ const toggleItem = (itemId: string) => {
                       onClosePanels?.();
                     }}
                     aria-label={lang === "es" ? "Vista previa de cotización" : "Preview quote"}
-                    className="inline-flex size-7 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                    className="inline-flex size-7 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
                     <Eye size={14} />
                   </button>
@@ -1162,7 +1162,7 @@ const toggleItem = (itemId: string) => {
                       generateQuotePdf(q, getHotel(q.hotelId), hotelLogos[q.hotelId])
                     }
                     aria-label={lang === "es" ? "Descargar PDF" : "Download PDF"}
-                    className="inline-flex size-7 items-center justify-center rounded-lg border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                    className="inline-flex size-7 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
                     <DownloadSimple size={14} />
                   </button>
