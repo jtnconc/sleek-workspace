@@ -1,4 +1,4 @@
-import { Suspense, lazy, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { CopySimple, DownloadSimple, Eye, PencilSimple, Trash } from "@phosphor-icons/react";
@@ -74,6 +74,17 @@ const rateInput = cn(
   "border-slate-400/40 bg-[rgba(100,116,139,0.15)] font-semibold text-slate-700 focus:border-slate-500",
 );
 const uid = () => Math.random().toString(36).slice(2, 10);
+
+const STATUS_PILL_CLASS: Record<"new" | "editing" | "duplicated", string> = {
+  new: "border-border bg-secondary text-muted-foreground",
+  editing: "border-sky-400/30 bg-sky-400/10 text-sky-400",
+  duplicated: "border-amber-400/30 bg-amber-400/10 text-amber-400",
+};
+const STATUS_PILL_LABEL: Record<"new" | "editing" | "duplicated", { en: string; es: string }> = {
+  new: { en: "New", es: "Nueva" },
+  editing: { en: "Editing", es: "Editando" },
+  duplicated: { en: "Duplicated", es: "Duplicada" },
+};
 
 const NEUTRAL_HOTEL = {
   id: "",
@@ -211,6 +222,8 @@ export function QuoteTool({
     hotelRoomTypes,
     setHotelRoomTypes,
     searchQuery,
+    showQuoteErrors,
+    setShowQuoteErrors,
   } = useWorkspace();
   const selectedHotel = quote.hotelId ? getHotel(quote.hotelId) : null;
   const hotel = selectedHotel ?? NEUTRAL_HOTEL;
@@ -223,8 +236,22 @@ const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set(
 /** History quote id currently awaiting a second tap to confirm deletion. */
  const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
  const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
-/** True right after a quote is opened/duplicated from History, until the user edits recipient/company. */
-  const [justLoaded, setJustLoaded] = useState(false);
+
+  const missingRecipient = showQuoteErrors && !quote.recipient.trim();
+  const missingRateIds = useMemo(
+    () =>
+      new Set(
+        quote.items.filter((item) => !item.ratePerNight || item.ratePerNight <= 0).map((i) => i.id),
+      ),
+    [quote.items],
+  );
+
+  // Clear the validation banner as soon as every required field is filled in.
+  useEffect(() => {
+    if (!showQuoteErrors) return;
+    const stillMissing = !quote.recipient.trim() || missingRateIds.size > 0;
+    if (!stillMissing) setShowQuoteErrors(false);
+  }, [showQuoteErrors, quote.recipient, missingRateIds, setShowQuoteErrors]);
 
   /**
    * Field-commit change logging. Text inputs update the quote on every
@@ -505,6 +532,16 @@ const toggleItem = (itemId: string) => {
               <p className="mt-1 tabular-nums text-[11px] text-muted-foreground">
                 {L.quotationNo} {quoteNumber(quote)}
               </p>
+              {quote.status && (
+                <span
+                  className={cn(
+                    "mt-1 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium",
+                    STATUS_PILL_CLASS[quote.status],
+                  )}
+                >
+                  {STATUS_PILL_LABEL[quote.status][lang]}
+                </span>
+              )}
             </div>
           </header>
 
@@ -530,29 +567,27 @@ const toggleItem = (itemId: string) => {
                 <span className="label-xs">{L.recipient}</span>
                 <input
                   value={quote.recipient}
-                  onChange={(e) => {
-                    updateQuote({ recipient: e.target.value });
-                    setJustLoaded(false);
-                  }}
+                  onChange={(e) => updateQuote({ recipient: e.target.value })}
                   onFocus={captureFieldValue("recipient")}
                   onBlur={commitTextField("recipient")}
-                  className={inputCls}
-                  style={justLoaded ? { backgroundColor: "rgba(100, 116, 139, 0.15)" } : undefined}
+                  className={cn(inputCls, missingRecipient && "border-destructive/60 focus-visible:ring-destructive/40")}
+                  aria-invalid={missingRecipient}
                 />
+                {missingRecipient && (
+                  <span className="text-[11px] text-destructive">
+                    {lang === "es" ? "Falta el destinatario" : "Recipient is required"}
+                  </span>
+                )}
               </label>
             </div>
             <label className="flex flex-col gap-1">
               <span className="label-xs">{L.company}</span>
               <input
                 value={quote.company}
-                onChange={(e) => {
-                  updateQuote({ company: e.target.value });
-                  setJustLoaded(false);
-                }}
+                onChange={(e) => updateQuote({ company: e.target.value })}
                 onFocus={captureFieldValue("company")}
                 onBlur={commitTextField("company")}
                 className={inputCls}
-                style={justLoaded ? { backgroundColor: "rgba(100, 116, 139, 0.15)" } : undefined}
               />
             </label>
           </div>
@@ -777,9 +812,18 @@ const toggleItem = (itemId: string) => {
                               className={cn(
                                 rateInput,
                                 "number-input-clean h-8 py-1 pl-6",
+                                showQuoteErrors &&
+                                  missingRateIds.has(item.id) &&
+                                  "border-destructive/60 focus-visible:ring-destructive/40",
                               )}
+                              aria-invalid={showQuoteErrors && missingRateIds.has(item.id)}
                             />
                           </div>
+                          {showQuoteErrors && missingRateIds.has(item.id) && (
+                            <span className="text-[11px] text-destructive">
+                              {lang === "es" ? "Falta la tarifa" : "Rate is required"}
+                            </span>
+                          )}
                         </label>
                         <label className="flex shrink-0 flex-col gap-1">
                           <span className="label-xs">ITBMS</span>
@@ -1126,7 +1170,6 @@ const toggleItem = (itemId: string) => {
                   <button
                     onClick={() => {
                       loadQuote(q.id);
-                      setJustLoaded(true);
                       onClosePanels?.();
                     }}
                     aria-label={lang === "es" ? "Abrir cotización" : "Open quote"}
@@ -1137,7 +1180,6 @@ const toggleItem = (itemId: string) => {
                   <button
                     onClick={() => {
                       duplicateQuote(q.id);
-                      setJustLoaded(true);
                       onClosePanels?.();
                     }}
                     aria-label={lang === "es" ? "Duplicar cotización" : "Duplicate quote"}
@@ -1148,7 +1190,6 @@ const toggleItem = (itemId: string) => {
                   <button
                     onClick={() => {
                       loadQuote(q.id);
-                      setJustLoaded(true);
                       onTogglePreview?.();
                       onClosePanels?.();
                     }}
@@ -1158,9 +1199,16 @@ const toggleItem = (itemId: string) => {
                     <Eye size={14} />
                   </button>
                   <button
-                    onClick={() =>
-                      generateQuotePdf(q, getHotel(q.hotelId), hotelLogos[q.hotelId])
-                    }
+                    onClick={() => {
+                      const missing = !q.recipient.trim() || q.items.some((item) => !item.ratePerNight || item.ratePerNight <= 0);
+                      if (missing) {
+                        loadQuote(q.id);
+                        setShowQuoteErrors(true);
+                        onClosePanels?.();
+                        return;
+                      }
+                      generateQuotePdf(q, getHotel(q.hotelId), hotelLogos[q.hotelId]);
+                    }}
                     aria-label={lang === "es" ? "Descargar PDF" : "Download PDF"}
                     className="inline-flex h-7 w-9 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >

@@ -143,6 +143,7 @@ const DEFAULT_QUOTE = (): QuoteDoc => {
     intro: hotel.es.intro,
     description: "",
     descriptionEdited: false,
+    status: "new",
     itbmsRate: hotel.taxRate,
     includedServices: [...hotel.es.includedServices],
     hotelInfo: hotel.es.hotelInfo,
@@ -206,6 +207,13 @@ interface WorkspaceState {
   /** Increments on every search-result open so repeat hits on the same widget re-trigger the shake. */
   searchPulseToken: number;
 
+  /**
+   * When true, the quote form/history should surface inline validation
+   * messages for missing required fields (recipient, item rates). Set by a
+   * failed download attempt; cleared once every required field is filled.
+   */
+  showQuoteErrors: boolean;
+
   /** Language used for the notes editor spellcheck / autocorrect dictionary. */
 }
 
@@ -264,6 +272,7 @@ interface WorkspaceApi extends WorkspaceState {
   clearPulse: (id: string) => void;
   clearSearchPulse: () => void;
   setSearchQuery: (q: string) => void;
+  setShowQuoteErrors: (value: boolean) => void;
   updateQuote: (patch: Partial<QuoteDoc>) => void;
   /**
    * Append a change-log entry for a "loggeable" quote field. Call this only
@@ -346,6 +355,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     searchQuery: "",
     searchPulseId: null,
     searchPulseToken: 0,
+    showQuoteErrors: false,
   });
 
   useEffect(() => {
@@ -1094,7 +1104,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       loadQuote: (id) =>
         setState((s) => {
           const q = s.quoteHistory.find((x) => x.id === id);
-          return q ? { ...s, quote: { ...q } } : s;
+          return q ? { ...s, quote: { ...q, status: "editing" }, showQuoteErrors: false } : s;
         }),
       duplicateQuote: (id) =>
         setState((s) => {
@@ -1107,7 +1117,9 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
               updatedAt: new Date().toISOString(),
               duplicatedFrom: quoteNumber(q),
               changeLog: [],
+              status: "duplicated",
             },
+            showQuoteErrors: false,
           };
         }),
       deleteQuote: (id) =>
@@ -1143,9 +1155,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
               checkOut: d.checkOut,
               signature: d.signature,
               items: [{ ...fresh.items[0]!, roomType: firstRoom }],
+              status: "new",
             },
+            showQuoteErrors: false,
           };
         }),
+      setShowQuoteErrors: (value) => setState((s) => ({ ...s, showQuoteErrors: value })),
     }),
     [state, patchWidgets],
   );
