@@ -283,7 +283,7 @@ export function WidgetGrid() {
 
   const activate = (id: string) => {
     setSettling(id);
-    openWidget(id);
+    openWidget(id, { fromSearch: true });
   };
 
   if (minimized)
