@@ -1,7 +1,7 @@
 import { Suspense, lazy, useMemo, useRef, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { CopySimple, DownloadSimple, Eye, NotePencil, Trash } from "@phosphor-icons/react";
+import { CopySimple, DownloadSimple, Eye, PencilSimple, Trash } from "@phosphor-icons/react";
 import {
   Check,
   ChevronDown,
@@ -1147,7 +1147,7 @@ const toggleItem = (itemId: string) => {
                     aria-label={lang === "es" ? "Abrir cotización" : "Open quote"}
                     className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
-                    <NotePencil size={14} />
+                    <PencilSimple size={14} />
                   </button>
                   <button
                     onClick={() => {
