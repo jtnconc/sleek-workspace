@@ -1,18 +1,14 @@
 import { motion } from "framer-motion";
-import {
-  BadgePercent,
-  FileSpreadsheet,
-  SquarePen,
-} from "lucide-react";
+import { FileText, Notepad, SealPercent, type IconProps } from "@phosphor-icons/react";
 import { useWorkspace } from "@/workspace/store";
 import type { ToolId } from "@/workspace/types";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const TOOLS: { id: ToolId; label: string; Icon: React.ComponentType<{ className?: string; strokeWidth?: number }> }[] = [
-  { id: "notes", label: "Notes", Icon: SquarePen },
-  { id: "quote", label: "Quote", Icon: FileSpreadsheet },
-  { id: "rates", label: "Rates", Icon: BadgePercent },
+const TOOLS: { id: ToolId; label: string; Icon: React.ComponentType<IconProps> }[] = [
+  { id: "notes", label: "Notes", Icon: Notepad },
+  { id: "quote", label: "Quote", Icon: FileText },
+  { id: "rates", label: "Rates", Icon: SealPercent },
 ];
 
 export function ToolSwitcher() {
@@ -42,9 +38,9 @@ export function ToolSwitcher() {
                     />
                   )}
                   <t.Icon
-                    strokeWidth={2}
+                    size={18}
                     className={cn(
-                      "relative z-10 size-[18px] transition-colors",
+                      "relative z-10 transition-colors",
                       active
                         ? "text-primary-foreground"
                         : "text-muted-foreground hover:text-foreground",

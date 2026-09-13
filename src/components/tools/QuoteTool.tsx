@@ -1,16 +1,13 @@
 import { Suspense, lazy, useMemo, useRef, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
+import { CopySimple, DownloadSimple, Eye, NotePencil, Trash } from "@phosphor-icons/react";
 import {
   Check,
   ChevronDown,
   ChevronUp,
-  Copy,
-  Download,
-  ExternalLink,
   History,
   ImageUp,
-  Eye,
   Plus,
   Trash2,
   X,
@@ -1150,7 +1147,7 @@ const toggleItem = (itemId: string) => {
                     aria-label={lang === "es" ? "Abrir cotización" : "Open quote"}
                     className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
-                    <ExternalLink className="size-3.5" strokeWidth={2} />
+                    <NotePencil size={14} />
                   </button>
                   <button
                     onClick={() => {
@@ -1161,14 +1158,14 @@ const toggleItem = (itemId: string) => {
                     aria-label={lang === "es" ? "Duplicar cotización" : "Duplicate quote"}
                     className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
-                    <Copy className="size-3.5" strokeWidth={2} />
+                    <CopySimple size={14} />
                   </button>
                   <button
                     onClick={() => setPreviewingQuoteId(q.id)}
                     aria-label={lang === "es" ? "Vista previa de cotización" : "Preview quote"}
                     className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
-                    <Eye className="size-3.5" strokeWidth={2} />
+                    <Eye size={14} />
                   </button>
                   <button
                     onClick={() =>
@@ -1177,7 +1174,7 @@ const toggleItem = (itemId: string) => {
                     aria-label={lang === "es" ? "Descargar PDF" : "Download PDF"}
                     className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
-                    <Download className="size-3.5" strokeWidth={2} />
+                    <DownloadSimple size={14} />
                   </button>
                   {confirmingDelete === q.id ? (
                     <>
@@ -1205,7 +1202,7 @@ const toggleItem = (itemId: string) => {
                       aria-label={lang === "es" ? "Eliminar cotización" : "Delete quote"}
                       className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-destructive"
                     >
-                      <Trash2 className="size-3.5" strokeWidth={2} />
+                      <Trash size={14} />
                     </button>
                   )}
                 </div>

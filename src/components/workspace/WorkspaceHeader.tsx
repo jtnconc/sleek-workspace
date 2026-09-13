@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FileText, Search, X } from "lucide-react";
+import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { FileText } from "lucide-react";
 import { widgetIcon, type WidgetIconComponent } from "@/components/workspace/widget-icons";
 import { accentVar } from "@/components/workspace/AccentControl";
 import { useWorkspace } from "@/workspace/store";
@@ -264,7 +265,7 @@ export function WorkspaceHeader({
                     onClick={closeSearch}
                     className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
-                    <Search className="size-[18px]" />
+                    <MagnifyingGlass size={18} />
                   </button>
                   <input
                     ref={searchInputRef}
@@ -283,13 +284,13 @@ export function WorkspaceHeader({
                       }}
                       className="flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
                     >
-                      <X className="size-3.5" />
+                      <X size={14} />
                     </button>
                   )}
                 </>
               ) : (
                 <>
-                  <Search className="size-[18px] shrink-0" />
+                  <MagnifyingGlass size={18} className="shrink-0" />
                   <span className="truncate text-[12px]">Search</span>
                 </>
               )}

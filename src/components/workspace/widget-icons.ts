@@ -1,35 +1,31 @@
 import {
-  BellRing,
   BarChart3,
   Bookmark,
   Briefcase,
   CalendarDays,
-  ContactRound,
   Coffee,
-  Info,
   Key,
-  ListChecks,
   MapPin,
   Phone,
   Plane,
-  StickyNote,
 } from "lucide-react";
+import { AddressBook, BellRinging, Info, ListChecks, Note } from "@phosphor-icons/react";
 import type { ComponentType, CSSProperties } from "react";
 import type { WidgetIconName, WidgetType } from "@/workspace/types";
 
 export type WidgetIconComponent = ComponentType<{
   className?: string | undefined;
   style?: CSSProperties | undefined;
-  strokeWidth?: number | undefined;
+  size?: number | string | undefined;
 }>;
 
 /** Small curated icon set available for widget customization. */
 export const WIDGET_ICONS: Record<WidgetIconName, WidgetIconComponent> = {
-  bell: BellRing,
+  bell: BellRinging,
   check: ListChecks,
-  note: StickyNote,
+  note: Note,
   info: Info,
-  users: ContactRound,
+  users: AddressBook,
   calendar: CalendarDays,
   phone: Phone,
   plane: Plane,

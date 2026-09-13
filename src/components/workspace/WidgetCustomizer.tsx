@@ -50,8 +50,7 @@ export function WidgetCustomizer({
               )}
             >
               <Icon
-                className="size-[14px]"
-                strokeWidth={2}
+                size={14}
                 style={{ color: name === icon ? accentVar(accent) : undefined }}
               />
             </button>
