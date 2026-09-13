@@ -38,7 +38,7 @@ export function ToolSwitcher() {
                     />
                   )}
                   <t.Icon
-                    size={18}
+                    size={22}
                     className={cn(
                       "relative z-10 transition-colors",
                       active
