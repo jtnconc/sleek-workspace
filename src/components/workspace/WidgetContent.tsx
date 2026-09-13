@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { Trash } from "@phosphor-icons/react";
 import {
   AlarmClock,
   ArrowUpRight,
@@ -166,7 +166,7 @@ function DeleteAction({
   if (!confirming)
     return (
       <MiniAction label={label} onClick={onRequest}>
-        <TrashIcon className="size-3" strokeWidth={2} />
+        <Trash size={12} />
       </MiniAction>
     );
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { BoldIcon, ItalicIcon } from "@heroicons/react/24/outline";
-import { ImagePlus, ChevronsRight, Highlighter, List } from "lucide-react";
+import { Bold, CaretDoubleRight, Highlighter, Italic, ListBullets } from "@phosphor-icons/react";
+import { ImagePlus } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import {
@@ -99,21 +99,21 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
     {
       key: "bold",
       label: "Bold",
-      icon: BoldIcon,
+      icon: Bold,
       active: active.bold,
       onClick: () => toggle("bold"),
     },
     {
       key: "italic",
       label: "Italic",
-      icon: ItalicIcon,
+      icon: Italic,
       active: active.italic,
       onClick: () => toggle("italic"),
     },
     {
       key: "list",
       label: "Bullet list",
-      icon: List,
+      icon: ListBullets,
       active: active.list,
       onClick: () => {
         toggleNotesList();
@@ -230,7 +230,7 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
                       onMouseDown={(e) => e.preventDefault()}
                       className={btn}
                     >
-                      <Icon className="size-[18px]" strokeWidth={2} />
+                      <Icon size={18} />
                     </button>
                   </PopoverTrigger>
                   <PopoverContent align="start" className="w-auto p-0">
@@ -254,7 +254,7 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
               {...entrance(index)}
               exit={{ opacity: 0, scale: 0.75 }}
             >
-              <Icon className="size-[18px]" strokeWidth={2} />
+              <Icon size={18} />
             </motion.button>
           );
         })}
@@ -278,7 +278,7 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
                   onPointerDown={saveNotesSelection}
                   className="size-8 rounded-full border-border bg-surface text-muted-foreground shadow-desk hover:bg-secondary hover:text-foreground"
                 >
-                  <ChevronsRight className="size-[18px]" strokeWidth={2} />
+                  <CaretDoubleRight size={18} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="min-w-44">
@@ -288,7 +288,7 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
                     return (
                       <DropdownMenuSub key={action.key}>
                         <DropdownMenuSubTrigger>
-                          <Icon strokeWidth={2} />
+                          <Icon size={16} />
                           <span>{action.label}</span>
                         </DropdownMenuSubTrigger>
                         <DropdownMenuSubContent className="w-auto p-0">
@@ -306,7 +306,7 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
                       }}
                       className={cn(action.active && "bg-secondary text-foreground")}
                     >
-                      <Icon strokeWidth={2} />
+                      <Icon size={16} />
                       <span>{action.label}</span>
                     </DropdownMenuItem>
                   );

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Gear } from "@phosphor-icons/react";
 import {
   Check,
   ChevronUp,
@@ -8,7 +9,6 @@ import {
   Terminal,
   Sparkles,
   Lock,
-  Settings,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "@/auth/store";
@@ -113,7 +113,7 @@ export function SettingsPanel() {
           }}
           className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground shadow-desk transition-colors hover:bg-secondary hover:text-foreground"
         >
-          <Settings className="size-[18px]" strokeWidth={2} />
+          <Gear size={18} />
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="z-50 w-60 space-y-3 p-3">

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronsRight, Download, Eye, History } from "lucide-react";
+import { CaretDoubleRight, ClockCounterClockwise, DownloadSimple, Eye } from "@phosphor-icons/react";
 import { useWorkspace } from "@/workspace/store";
 import { getHotel } from "@/lib/hotels";
 import { generateQuotePdf } from "@/lib/quote-pdf";
@@ -55,7 +55,7 @@ export function QuoteToolbar({
     },
     {
       key: "download",
-      icon: Download,
+      icon: DownloadSimple,
       label: "Download PDF",
       disabled: !selected,
       onClick: download,
@@ -63,7 +63,7 @@ export function QuoteToolbar({
     },
     {
       key: "history",
-      icon: History,
+      icon: ClockCounterClockwise,
       label: "Quote history",
       disabled: false,
       onClick: onToggleHistory,
@@ -96,7 +96,7 @@ export function QuoteToolbar({
                     onClick={b.onClick}
                     className={cn(btn, b.active && activeBtn)}
                   >
-                    <b.icon className="size-[18px]" strokeWidth={2} />
+                    <b.icon size={18} />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">{b.label}</TooltipContent>
@@ -124,7 +124,7 @@ export function QuoteToolbar({
                         aria-label="More quotation actions"
                         className="size-8 rounded-full border-border bg-surface text-muted-foreground shadow-desk hover:bg-secondary hover:text-foreground"
                       >
-                        <ChevronsRight className="size-[18px]" strokeWidth={2} />
+                        <CaretDoubleRight size={18} />
                       </Button>
                     </DropdownMenuTrigger>
                   </TooltipTrigger>
@@ -138,7 +138,7 @@ export function QuoteToolbar({
                       onSelect={b.onClick}
                       className={cn(b.active && "bg-secondary text-foreground")}
                     >
-                      <b.icon strokeWidth={2} />
+                      <b.icon size={16} />
                       <span>{b.label}</span>
                     </DropdownMenuItem>
                   ))}
