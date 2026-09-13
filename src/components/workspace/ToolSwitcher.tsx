@@ -15,7 +15,7 @@ export function ToolSwitcher() {
   const { activeTool, mode, openTool } = useWorkspace();
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={700}>
       <div className="relative flex items-center gap-2 rounded-full border border-border bg-surface p-1 shadow-desk">
         {TOOLS.map((t) => {
           const active = mode === "tool" && activeTool === t.id;
