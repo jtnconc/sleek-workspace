@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bold, CaretDoubleRight, Highlighter, Italic, ListBullets } from "@phosphor-icons/react";
+import { TextB, CaretDoubleRight, Highlighter, TextItalic, ListBullets } from "@phosphor-icons/react";
 import { ImagePlus } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -99,14 +99,14 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
     {
       key: "bold",
       label: "Bold",
-      icon: Bold,
+      icon: TextB,
       active: active.bold,
       onClick: () => toggle("bold"),
     },
     {
       key: "italic",
       label: "Italic",
-      icon: Italic,
+      icon: TextItalic,
       active: active.italic,
       onClick: () => toggle("italic"),
     },

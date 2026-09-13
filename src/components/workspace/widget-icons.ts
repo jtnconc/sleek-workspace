@@ -14,9 +14,9 @@ import type { ComponentType, CSSProperties } from "react";
 import type { WidgetIconName, WidgetType } from "@/workspace/types";
 
 export type WidgetIconComponent = ComponentType<{
-  className?: string | undefined;
-  style?: CSSProperties | undefined;
-  size?: number | string | undefined;
+  className?: string;
+  style?: CSSProperties;
+  size?: number | string;
 }>;
 
 /** Small curated icon set available for widget customization. */

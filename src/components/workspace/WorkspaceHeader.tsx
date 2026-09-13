@@ -317,8 +317,7 @@ export function WorkspaceHeader({
                           >
                             <h.Icon
                               className="size-3.5 shrink-0"
-                              strokeWidth={2}
-                              style={h.color ? { color: h.color } : undefined}
+                              {...(h.color ? { style: { color: h.color } } : {})}
                             />
                             <span className="min-w-0 flex-1 truncate">{h.text}</span>
                             <span className="label-xs shrink-0">{h.group}</span>
