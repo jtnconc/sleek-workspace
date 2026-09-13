@@ -60,6 +60,10 @@ function WorkspacePage() {
                   setQuotePreview(false);
                   setQuoteHistory(false);
                 }}
+                onToggleQuotePreview={() => {
+                  setQuotePreview((v) => !v);
+                  setQuoteHistory(false);
+                }}
               />
             </main>
           </div>
@@ -73,10 +77,12 @@ function Workspace({
   quotePreview,
   quoteHistory,
   onCloseQuotePanels,
+  onToggleQuotePreview,
 }: {
   quotePreview: boolean;
   quoteHistory: boolean;
   onCloseQuotePanels: () => void;
+  onToggleQuotePreview: () => void;
 }) {
   const { mode, activeTool, widgets } = useWorkspace();
   const toolMode = mode === "tool";

@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-import { FileText, Notepad, SealPercent, type IconProps } from "@phosphor-icons/react";
+import { FileText, NotePencil, SealPercent, type IconProps } from "@phosphor-icons/react";
 import { useWorkspace } from "@/workspace/store";
 import type { ToolId } from "@/workspace/types";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const TOOLS: { id: ToolId; label: string; Icon: React.ComponentType<IconProps> }[] = [
-  { id: "notes", label: "Notes", Icon: Notepad },
+  { id: "notes", label: "Notes", Icon: NotePencil },
   { id: "quote", label: "Quote", Icon: FileText },
   { id: "rates", label: "Rates", Icon: SealPercent },
 ];

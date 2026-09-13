@@ -1,7 +1,7 @@
 import { Suspense, lazy, useMemo, useRef, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { CopySimple, DownloadSimple, Eye, NotePencil, Trash } from "@phosphor-icons/react";
+import { CopySimple, DownloadSimple, Eye, PencilSimple, Trash } from "@phosphor-icons/react";
 import {
   Check,
   ChevronDown,
@@ -188,12 +188,14 @@ interface QuoteToolProps {
   showPreview?: boolean;
   showHistory?: boolean;
   onClosePanels?: () => void;
+  onTogglePreview?: () => void;
 }
 
 export function QuoteTool({
   showPreview = false,
   showHistory = false,
   onClosePanels,
+  onTogglePreview,
 }: QuoteToolProps) {
   const {
     quote,
@@ -223,7 +225,6 @@ const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set(
  const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
 /** True right after a quote is opened/duplicated from History, until the user edits recipient/company. */
   const [justLoaded, setJustLoaded] = useState(false);
-  const [previewingQuoteId, setPreviewingQuoteId] = useState<string | null>(null);
 
   /**
    * Field-commit change logging. Text inputs update the quote on every
@@ -280,22 +281,6 @@ const toggleItem = (itemId: string) => {
     [showPreview, selectedHotel, quote, logo],
   );
 
-  /** The historical quote currently being previewed via the History panel, if any. */
-  const previewingQuote = previewingQuoteId
-    ? quoteHistory.find((h) => h.id === previewingQuoteId) ?? null
-    : null;
-  const previewingHotel = previewingQuote ? getHotel(previewingQuote.hotelId) : null;
-  const previewingLogo = previewingQuote
-    ? hotelLogos[previewingQuote.hotelId] ?? previewingHotel?.logoUrl
-    : undefined;
-  /** Blob URL for that specific historical quote's PDF, independent of the active form quote. */
-  const previewingPdfUrl = useMemo(
-    () =>
-      previewingQuote && previewingHotel
-        ? quotePdfPreviewUrl(previewingQuote, previewingHotel, previewingLogo)
-        : null,
-    [previewingQuote, previewingHotel, previewingLogo],
-  );
 
 
 
@@ -1145,9 +1130,9 @@ const toggleItem = (itemId: string) => {
                       onClosePanels?.();
                     }}
                     aria-label={lang === "es" ? "Abrir cotización" : "Open quote"}
-                    className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                    className="inline-flex size-7 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
-                    <NotePencil size={14} />
+                    <PencilSimple size={14} />
                   </button>
                   <button
                     onClick={() => {
@@ -1156,14 +1141,19 @@ const toggleItem = (itemId: string) => {
                       onClosePanels?.();
                     }}
                     aria-label={lang === "es" ? "Duplicar cotización" : "Duplicate quote"}
-                    className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                    className="inline-flex size-7 items-center justify-center rounded-[6px] border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
                     <CopySimple size={14} />
                   </button>
                   <button
-                    onClick={() => setPreviewingQuoteId(q.id)}
+                    onClick={() => {
+                      loadQuote(q.id);
+                      setJustLoaded(true);
+                      onTogglePreview?.();
+                      onClosePanels?.();
+                    }}
                     aria-label={lang === "es" ? "Vista previa de cotización" : "Preview quote"}
-                    className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                    className="inline-flex size-7 items-center justify-center rounded-[6px] border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
                     <Eye size={14} />
                   </button>
@@ -1172,7 +1162,7 @@ const toggleItem = (itemId: string) => {
                       generateQuotePdf(q, getHotel(q.hotelId), hotelLogos[q.hotelId])
                     }
                     aria-label={lang === "es" ? "Descargar PDF" : "Download PDF"}
-                    className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                    className="inline-flex size-7 items-center justify-center rounded-[6px] border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
                     <DownloadSimple size={14} />
                   </button>
@@ -1184,7 +1174,7 @@ const toggleItem = (itemId: string) => {
                           setConfirmingDelete(null);
                         }}
                         aria-label={lang === "es" ? "Confirmar eliminación" : "Confirm delete"}
-                        className="inline-flex size-7 items-center justify-center rounded-full border border-destructive/50 bg-destructive/10 text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground"
+                        className="ml-2 inline-flex size-7 items-center justify-center rounded-full border border-destructive/50 bg-destructive/10 text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground"
                       >
                         <Check className="size-3.5" />
                       </button>
@@ -1200,7 +1190,7 @@ const toggleItem = (itemId: string) => {
                     <button
                       onClick={() => setConfirmingDelete(q.id)}
                       aria-label={lang === "es" ? "Eliminar cotización" : "Delete quote"}
-                      className="inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-destructive"
+                      className="ml-2 inline-flex size-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-destructive"
                     >
                       <Trash size={14} />
                     </button>
@@ -1212,40 +1202,6 @@ const toggleItem = (itemId: string) => {
           </div>
         )}
       </div>
-      {previewingQuote && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-          onClick={() => setPreviewingQuoteId(null)}
-        >
-          <div
-            className="flex max-h-full w-full max-w-md flex-col overflow-hidden rounded-2xl bg-surface"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-border px-3 py-2">
-              <p className="text-[13px] font-semibold">
-                {lang === "es" ? "Vista previa" : "Preview"} · {quoteNumber(previewingQuote)}
-              </p>
-              <button
-                type="button"
-                onClick={() => setPreviewingQuoteId(null)}
-                aria-label={lang === "es" ? "Cerrar" : "Close"}
-                className="rounded-lg p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-              >
-                <X className="size-4" />
-              </button>
-            </div>
-            <div className="min-h-0 flex-1 overflow-y-auto p-3">
-              {previewingPdfUrl && (
-                <ClientOnly fallback={<PdfSkeleton />}>
-                  <Suspense fallback={<PdfSkeleton />}>
-                    <QuotePdfViewer url={previewingPdfUrl} />
-                  </Suspense>
-                </ClientOnly>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
