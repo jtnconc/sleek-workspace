@@ -33,11 +33,17 @@ export function QuoteToolbar({
   history,
   onToggleHistory,
 }: Props) {
-  const { quote, hotelLogos, archiveQuote, resetQuote } = useWorkspace();
+  const { quote, hotelLogos, archiveQuote, resetQuote, setShowQuoteErrors } = useWorkspace();
   const selected = quote.hotelId ? getHotel(quote.hotelId) : null;
 
   const download = () => {
     if (!selected) return;
+    const missingRecipient = !quote.recipient.trim();
+    const missingRate = quote.items.some((item) => !item.ratePerNight || item.ratePerNight <= 0);
+    if (missingRecipient || missingRate) {
+      setShowQuoteErrors(true);
+      return;
+    }
     archiveQuote();
     generateQuotePdf(quote, selected, hotelLogos[quote.hotelId] ?? selected.logoUrl);
     // Fresh blank form, ready for the next quotation.
@@ -74,7 +80,7 @@ export function QuoteToolbar({
   const overflowButtons = buttons.slice(visibleCount);
 
   return (
-    <TooltipProvider delayDuration={300}>
+    <TooltipProvider delayDuration={700}>
       <div className="flex shrink-0 items-center gap-1.5">
         <AnimatePresence initial={false} mode="popLayout">
           {visibleButtons.map((b, index) => (

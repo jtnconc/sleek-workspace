@@ -42,7 +42,7 @@ export function FilterChips({
           transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
           className="overflow-hidden"
         >
-          <TooltipProvider delayDuration={300}>
+          <TooltipProvider delayDuration={700}>
             <div
               className="mb-2.5 flex flex-wrap items-center gap-1.5 pt-0.5"
               onClick={(e) => e.stopPropagation()}

@@ -113,7 +113,7 @@ export function SettingsPanel() {
           }}
           className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground shadow-desk transition-colors hover:bg-secondary hover:text-foreground"
         >
-          <Gear size={18} />
+          <Gear size={22} />
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="z-50 w-60 space-y-3 p-3">

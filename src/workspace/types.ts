@@ -260,6 +260,8 @@ export interface QuoteDoc {
   changeLog?: { label: string; from: string; to: string; at: string }[];
   /** Quote number of the original quote, if this quote is a duplicate. */
   duplicatedFrom?: string;
+  /** Lifecycle status shown as a small pill next to the quotation number. */
+  status?: "new" | "editing" | "duplicated";
 }
 
 /** Per-language editable text content of a hotel. */
