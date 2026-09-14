@@ -1,7 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Bundle the worker locally via Vite instead of fetching it from an external
+// CDN, so the preview keeps working on networks that block unpkg.com.
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url,
+).toString();
 
 interface QuotePdfViewerProps {
   /** Blob URL of the generated quotation PDF. */
