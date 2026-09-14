@@ -282,6 +282,10 @@ export function WidgetGrid() {
   }, [searchPulseId, searchPulseToken]);
 
   const activate = (id: string) => {
+    openWidget(id);
+  };
+
+  const activateFromDock = (id: string) => {
     setSettling(id);
     openWidget(id, { fromSearch: true });
   };
