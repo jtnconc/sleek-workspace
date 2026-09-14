@@ -1090,6 +1090,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       logQuoteField: (field, from, to) =>
         setState((s) => {
           if (from === to) return s;
+          if (s.quote.status !== "editing" && s.quote.status !== "duplicated") return s;
           const entry = { label: QUOTE_LOG_LABELS[field], from, to, at: new Date().toISOString() };
           return {
             ...s,

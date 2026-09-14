@@ -18,6 +18,7 @@ import {
   QUOTE_LABELS,
   formatDate,
   formatDateShort,
+  formatDateTime,
   itemNights,
   lineSubtotal,
   localISODate,
@@ -200,6 +201,7 @@ interface QuoteToolProps {
   showHistory?: boolean;
   onClosePanels?: () => void;
   onTogglePreview?: () => void;
+  onShowPreview?: () => void;
 }
 
 export function QuoteTool({
@@ -207,6 +209,7 @@ export function QuoteTool({
   showHistory = false,
   onClosePanels,
   onTogglePreview,
+  onShowPreview,
 }: QuoteToolProps) {
   const {
     quote,
@@ -1161,7 +1164,7 @@ const toggleItem = (itemId: string) => {
                         <span className="font-medium text-foreground/80">{entry.label}</span>
                         {": "}
                         {entry.from} → {entry.to}{" "}
-                        <span className="text-muted-foreground/60">{formatDateShort(entry.at)}</span>
+                        <span className="text-muted-foreground/60">{formatDateTime(entry.at)}</span>
                       </p>
                     ))}
                   </div>
@@ -1190,7 +1193,7 @@ const toggleItem = (itemId: string) => {
                   <button
                     onClick={() => {
                       loadQuote(q.id);
-                      onTogglePreview?.();
+                      onShowPreview?.();
                       onClosePanels?.();
                     }}
                     aria-label={lang === "es" ? "Vista previa de cotización" : "Preview quote"}
