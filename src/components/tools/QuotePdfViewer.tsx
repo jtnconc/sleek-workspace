@@ -1,7 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Bundle the worker locally via Vite instead of fetching it from an external
+// CDN, so the preview keeps working on networks that block unpkg.com.
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url,
+).toString();
 
 interface QuotePdfViewerProps {
   /** Blob URL of the generated quotation PDF. */
@@ -52,11 +57,18 @@ export function QuotePdfViewer({ url }: QuotePdfViewerProps) {
     setNumPages(0);
   }, [url]);
 
+  console.log("[v0] render", { url, width, numPages });
+
   return (
     <div ref={containerRef} className="w-full">
       <Document
         file={url}
-        onLoadSuccess={({ numPages: n }) => setNumPages(n)}
+        onLoadSuccess={({ numPages: n }) => {
+          console.log("[v0] Document onLoadSuccess", n);
+          setNumPages(n);
+        }}
+        onLoadError={(err) => console.log("[v0] Document onLoadError", err)}
+        onSourceError={(err) => console.log("[v0] Document onSourceError", err)}
         loading={
           width > 0 ? (
             <PageSkeleton width={width} />
