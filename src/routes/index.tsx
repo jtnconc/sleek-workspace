@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Reservation Workspace" },
+      { title: "Sleek Workspace" },
       {
         name: "description",
         content:
