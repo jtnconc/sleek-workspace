@@ -1194,7 +1194,6 @@ const toggleItem = (itemId: string) => {
                     onClick={() => {
                       loadQuote(q.id);
                       onShowPreview?.();
-                      onClosePanels?.();
                     }}
                     aria-label={lang === "es" ? "Vista previa de cotización" : "Preview quote"}
                     className="inline-flex h-7 w-9 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
