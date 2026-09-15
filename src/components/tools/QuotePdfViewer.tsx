@@ -1,12 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
+// Explicit Vite `?url` import instead of `new URL(..., import.meta.url)`, so the
+// worker is bundled locally (works offline / behind CDN blockers) without relying
+// on Vite's URL-constructor asset detection, which is less reliable across bundlers.
+import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
-// Bundle the worker locally via Vite instead of fetching it from an external
-// CDN, so the preview keeps working on networks that block unpkg.com.
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url,
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 interface QuotePdfViewerProps {
   /** Blob URL of the generated quotation PDF. */
@@ -53,22 +52,12 @@ export function QuotePdfViewer({ url }: QuotePdfViewerProps) {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    setNumPages(0);
-  }, [url]);
-
-  console.log("[v0] render", { url, width, numPages });
-
   return (
-    <div ref={containerRef} className="w-full">
+    <div ref={containerRef} className="flex w-full flex-col items-center justify-center">
       <Document
+        key={url}
         file={url}
-        onLoadSuccess={({ numPages: n }) => {
-          console.log("[v0] Document onLoadSuccess", n);
-          setNumPages(n);
-        }}
-        onLoadError={(err) => console.log("[v0] Document onLoadError", err)}
-        onSourceError={(err) => console.log("[v0] Document onSourceError", err)}
+        onLoadSuccess={({ numPages: n }) => setNumPages(n)}
         loading={
           width > 0 ? (
             <PageSkeleton width={width} />

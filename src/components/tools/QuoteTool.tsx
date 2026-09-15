@@ -233,10 +233,6 @@ export function QuoteTool({
   const lang = quote.language;
   const L = QUOTE_LABELS[lang];
   const { subtotal, tax, total } = quoteTotals(quote);
-useEffect(() => {
-  console.log("[v0] QuoteTool MOUNT", performance.now());
-  return () => console.log("[v0] QuoteTool UNMOUNT", performance.now());
-}, []);
 const [showDetails, setShowDetails] = useState(false);
 const [showRooms, setShowRooms] = useState(false);
 const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set());
@@ -314,20 +310,13 @@ const toggleItem = (itemId: string) => {
     () => (showPreview && selectedHotel ? quotePdfPreviewUrl(quote, selectedHotel, logo) : null),
     [showPreview, selectedHotel, quote, logo],
   );
-  console.log("[v0] pdfBlobUrl", pdfBlobUrl);
-  const _depsRef = useRef<{ showPreview: unknown; selectedHotel: unknown; quote: unknown; logo: unknown }>();
-  if (_depsRef.current) {
-    const prev = _depsRef.current;
-    console.log("[v0] deps changed?", {
-      showPreview: prev.showPreview !== showPreview,
-      selectedHotel: prev.selectedHotel !== selectedHotel,
-      quote: prev.quote !== quote,
-      logo: prev.logo !== logo,
-    });
-  }
-  _depsRef.current = { showPreview, selectedHotel, quote, logo };
-
-
+  // Each render of pdfBlobUrl allocates a fresh blob: URL — revoke the previous
+  // one whenever it changes (or the component unmounts) so it doesn't leak.
+  useEffect(() => {
+    return () => {
+      if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
+    };
+  }, [pdfBlobUrl]);
 
 
   const saveRoomTypes = (types: string[]) => {
