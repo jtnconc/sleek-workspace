@@ -305,7 +305,7 @@ export function WidgetGrid() {
                 key={w.id}
                 className="flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2"
               >
-                <Icon size={18} />
+                <Icon size={20} />
                 <span className="label-xs">{w.title}</span>
               </span>
             );
@@ -347,12 +347,11 @@ export function WidgetGrid() {
                   } as MotionStyle}
                 >
                   <Icon
-                    size={18}
+                    size={20}
                     className={cn(
-                      "shrink-0 transition-colors",
+                      "shrink-0 text-primary transition-colors",
                       alertPhase === "pre" && "due-clock-inline",
                     )}
-                    style={{ color: accentVar(w.accent) }}
                   />
                   <span
                     className={cn(

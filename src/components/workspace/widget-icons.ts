@@ -9,7 +9,7 @@ import {
   Phone,
   Plane,
 } from "lucide-react";
-import { AddressBook, BellRinging, Info, ListChecks, Note } from "@phosphor-icons/react";
+import { AddressBook, BellRinging, Info, ListChecks, Notepad } from "@phosphor-icons/react";
 import type { ComponentType, CSSProperties } from "react";
 import type { WidgetIconName, WidgetType } from "@/workspace/types";
 
@@ -23,7 +23,7 @@ export type WidgetIconComponent = ComponentType<{
 export const WIDGET_ICONS: Record<WidgetIconName, WidgetIconComponent> = {
   bell: BellRinging,
   check: ListChecks,
-  note: Note,
+  note: Notepad,
   info: Info,
   users: AddressBook,
   calendar: CalendarDays,
