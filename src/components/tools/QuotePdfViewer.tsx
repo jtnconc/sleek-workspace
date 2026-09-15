@@ -53,7 +53,7 @@ export function QuotePdfViewer({ url }: QuotePdfViewerProps) {
   }, []);
 
   return (
-    <div ref={containerRef} className="flex w-full flex-col items-center justify-center">
+    <div ref={containerRef} className="flex w-full flex-col items-center">
       <Document
         key={url}
         file={url}
