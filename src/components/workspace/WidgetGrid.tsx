@@ -471,7 +471,7 @@ export function WidgetGrid() {
                     }}
                     className="flex size-5 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-secondary"
                   >
-                    <Icon size={15} style={{ color: accent }} />
+                    <Icon size={15} className="text-primary" />
                   </button>
                 ) : widgetSupportsHeaderToggle(w.content.kind) ? (
                   <button
@@ -491,11 +491,11 @@ export function WidgetGrid() {
                       filtersOpenId === w.id && "bg-secondary",
                     )}
                   >
-                    <Icon size={15} style={{ color: accent }} />
+                    <Icon size={15} className="text-primary" />
                   </button>
                 ) : (
                   <span className="flex size-5 shrink-0 items-center justify-center">
-                    <Icon size={15} style={{ color: accent }} />
+                    <Icon size={15} className="text-primary" />
                   </span>
                 )}
                 {isSticky ? (
