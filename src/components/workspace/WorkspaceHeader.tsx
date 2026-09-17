@@ -202,7 +202,7 @@ export function WorkspaceHeader({
       className={cn(
         "sticky top-0 z-40 w-full shrink-0 transition-colors",
         mode === "widgets"
-          ? "border-b border-border/40 bg-background/55 backdrop-blur-2xl backdrop-saturate-[200%]"
+          ? "border-b border-border/30 bg-background/30 backdrop-blur-2xl backdrop-saturate-[200%]"
           : "border-b border-transparent bg-background",
 
       )}
