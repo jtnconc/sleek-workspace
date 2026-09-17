@@ -707,7 +707,7 @@ const toggleItem = (itemId: string) => {
                                       : "+ Manage/Edit room types",
                                 },
                               ]}
-                              className="h-8 border-primary bg-primary px-2 py-1 font-semibold text-primary-foreground shadow-none [&>svg]:text-primary-foreground [&>svg]:opacity-90"
+                              className="h-8 border-primary/30 bg-primary/15 px-2 py-1 font-semibold text-primary shadow-none [&>svg]:text-primary [&>svg]:opacity-90"
                               aria-label={L.roomType}
                             />
                           </div>
@@ -720,7 +720,7 @@ const toggleItem = (itemId: string) => {
                               value: option,
                               label: option,
                             }))}
-                            className="h-7 w-auto shrink-0 rounded-full border-primary bg-primary px-2 py-0.5 text-[11px] font-medium text-primary-foreground [&>svg]:text-primary-foreground [&>svg]:opacity-90"
+                            className="h-7 w-auto shrink-0 rounded-full border-primary/30 bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-primary [&>svg]:text-primary [&>svg]:opacity-90"
                             aria-label={L.accommodation}
                           />
                         </>
