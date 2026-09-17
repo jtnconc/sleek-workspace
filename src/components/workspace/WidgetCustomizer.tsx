@@ -57,6 +57,7 @@ export function WidgetCustomizer({
           );
         })}
       </div>
+      )}
       <div className="flex items-center gap-1.5">
         {ACCENTS.map((a) => (
           <button

@@ -570,6 +570,7 @@ export function WidgetGrid() {
                 tint={w.tint}
                 onIcon={(icon) => setWidgetIcon(w.id, icon)}
                 onTint={(t) => setWidgetTint(w.id, t)}
+                iconEditable={isSticky}
               />
             )}
             {!isLocked ? (
