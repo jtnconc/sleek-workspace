@@ -576,10 +576,8 @@ export function WidgetGrid() {
             {isCustomizing && (
               <WidgetCustomizer
                 icon={w.icon}
-                accent={w.accent}
                 tint={w.tint}
                 onIcon={(icon) => setWidgetIcon(w.id, icon)}
-                onAccent={(a) => setWidgetAccent(w.id, a)}
                 onTint={(t) => setWidgetTint(w.id, t)}
               />
             )}
