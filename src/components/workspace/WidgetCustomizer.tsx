@@ -16,11 +16,16 @@ export function WidgetCustomizer({
   tint,
   onIcon,
   onTint,
+  iconEditable = true,
 }: {
   icon?: WidgetIconName | undefined;
   tint?: WidgetAccent | undefined;
   onIcon: (icon: WidgetIconName) => void;
   onTint: (tint: WidgetAccent) => void;
+  /** false hides the icon picker entirely, leaving only card color — used
+   * for base widgets (Reminders/Contacts/Tasks/Notes) so their identifying
+   * icon can't be swapped away. */
+  iconEditable?: boolean;
 }) {
   return (
     <div
@@ -29,6 +34,7 @@ export function WidgetCustomizer({
       onDragStart={(e) => e.preventDefault()}
       className="mb-3 space-y-2 rounded-xl bg-surface-2 p-2"
     >
+      {iconEditable && (
       <div className="flex flex-wrap gap-1">
         {WIDGET_ICON_NAMES.map((name) => {
           const Icon = WIDGET_ICONS[name];
@@ -51,6 +57,7 @@ export function WidgetCustomizer({
           );
         })}
       </div>
+      )}
       <div className="flex items-center gap-1.5">
         {ACCENTS.map((a) => (
           <button
