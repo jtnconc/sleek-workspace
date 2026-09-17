@@ -1,8 +1,9 @@
 import {
+  AddressBook,
   Bed,
   BellRinging,
   BookmarkSimple,
-  Buildings,
+  Building,
   CalendarDots,
   CallBell,
   Carrot,
