@@ -1,6 +1,6 @@
 {
-  "name": "Reservation Workspace",
-  "short_name": "Reservation Desk",
+  "name": "Sleek Workspace",
+  "short_name": "Sleek WS",
   "description": "A digital reservation desk that adapts to the task being performed.",
   "start_url": "/",
   "display": "standalone",
