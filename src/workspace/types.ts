@@ -31,7 +31,7 @@ export type ItemStatus = "active" | "completed" | "archived";
 
 /** Curated icon set a widget can be customized with. */
 export type WidgetIconName =
-  | "buildings"
+  | "building"
   | "bed"
   | "star"
   | "code-block"
