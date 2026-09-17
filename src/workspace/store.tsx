@@ -776,7 +776,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
             display: source.display,
             accent: "yellow",
             tint: "yellow",
-            icon: "note",
+            icon: "push-pin",
             content: { kind: "notes", items: [{ ...item }] },
           };
           return [
