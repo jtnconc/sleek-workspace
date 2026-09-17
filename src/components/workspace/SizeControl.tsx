@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Lock, Unlock, Undo2 } from "lucide-react";
+import { Lock, Paintbrush, Undo2, Unlock } from "lucide-react";
 import type { WidgetSize } from "@/workspace/types";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +41,12 @@ export function SizeControl({
   onReturn?: (() => void) | undefined;
   /** accessible label/title for the return action, tailored to the source list */
   returnLabel?: string;
+
+  /** opens the icon/card-color customizer for this widget */
+  onCustomize?: () => void;
+
+  /** whether the customizer is currently open, for the active-state highlight */
+  customizing?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -123,6 +129,28 @@ export function SizeControl({
                 className="flex size-[18px] items-center justify-center rounded-[5px] text-muted-foreground/60 transition-colors hover:bg-secondary hover:text-foreground"
               >
                 <Undo2 className="size-[11px]" />
+              </button>
+            </>
+          ) : null}
+          {onCustomize ? (
+            <>
+              <span className="h-3 w-px bg-border" aria-hidden="true" />
+              <button
+                type="button"
+                aria-label="Customize card"
+                aria-pressed={customizing}
+                title="Customize card"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCustomize();
+                  setOpen(false);
+                }}
+                className={cn(
+                  "flex size-[18px] items-center justify-center rounded-[5px] transition-colors hover:bg-secondary",
+                  customizing ? "text-foreground" : "text-muted-foreground/60",
+                )}
+              >
+                <Paintbrush className="size-[11px]" />
               </button>
             </>
           ) : null}
