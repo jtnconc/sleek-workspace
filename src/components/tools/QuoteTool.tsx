@@ -556,7 +556,7 @@ const toggleItem = (itemId: string) => {
           <div className="grid gap-3 py-4 sm:grid-cols-2">
             <div className="flex items-end gap-2">
               <label className="flex w-[7.5rem] shrink-0 flex-col gap-1">
-                <span className="label-xs">{lang === "es" ? "Tratamiento" : "Treatment"}</span>
+                <span className="label-xs">{lang === "es" ? "Etiqueta" : "Treatment"}</span>
                 <SoftSelect
                   value={quote.salutation ?? "Estimado"}
                   onChange={(v) => {
@@ -568,7 +568,7 @@ const toggleItem = (itemId: string) => {
                     { value: "Estimado", label: "Estimado" },
                     { value: "Estimada", label: "Estimada" },
                   ]}
-                  aria-label={lang === "es" ? "Tratamiento" : "Treatment"}
+                  aria-label={lang === "es" ? "Etiqueta" : "Treatment"}
                 />
               </label>
               <label className="flex min-w-0 flex-1 flex-col gap-1">
@@ -578,7 +578,7 @@ const toggleItem = (itemId: string) => {
                   onChange={(e) => updateQuote({ recipient: e.target.value })}
                   onFocus={captureFieldValue("recipient")}
                   onBlur={commitTextField("recipient")}
-                  className={cn(inputCls, missingRecipient && "border-destructive/60 focus-visible:ring-destructive/40")}
+                  className={cn(inputCls, "bg-[rgba(100,116,139,0.05)]", missingRecipient && "border-destructive/60 focus-visible:ring-destructive/40")}
                   aria-invalid={missingRecipient}
                 />
                 {missingRecipient && (
@@ -595,7 +595,7 @@ const toggleItem = (itemId: string) => {
                 onChange={(e) => updateQuote({ company: e.target.value })}
                 onFocus={captureFieldValue("company")}
                 onBlur={commitTextField("company")}
-                className={inputCls}
+                className={cn(inputCls, "bg-[rgba(100,116,139,0.05)]")}
               />
             </label>
           </div>
@@ -668,7 +668,7 @@ const toggleItem = (itemId: string) => {
                         aria-label={L.qty}
                         className={cn(
                           monoInput,
-                          "number-input-clean h-8 w-12 shrink-0 px-2 py-1 text-center font-semibold",
+                          "number-input-clean h-8 w-12 shrink-0 bg-[rgba(100,116,139,0.05)] px-2 py-1 text-center font-semibold",
                         )}
                       />
                       {item.kind === "other" ? (
@@ -707,7 +707,7 @@ const toggleItem = (itemId: string) => {
                                       : "+ Manage/Edit room types",
                                 },
                               ]}
-                              className="h-8 border-border bg-white px-2 py-1 font-semibold text-foreground shadow-none"
+                              className="h-8 border-primary bg-primary px-2 py-1 font-semibold text-primary-foreground shadow-none [&>svg]:text-primary-foreground [&>svg]:opacity-90"
                               aria-label={L.roomType}
                             />
                           </div>
@@ -720,7 +720,7 @@ const toggleItem = (itemId: string) => {
                               value: option,
                               label: option,
                             }))}
-                            className="h-7 w-auto shrink-0 rounded-full border-gray-200 bg-white px-2 py-0.5 text-[11px] font-medium text-foreground"
+                            className="h-7 w-auto shrink-0 rounded-full border-primary bg-primary px-2 py-0.5 text-[11px] font-medium text-primary-foreground [&>svg]:text-primary-foreground [&>svg]:opacity-90"
                             aria-label={L.accommodation}
                           />
                         </>
@@ -732,7 +732,7 @@ const toggleItem = (itemId: string) => {
                         }
                         placeholder={lang === "es" ? "Huésped" : "Guest Name"}
                         aria-label={L.guest}
-                        className={cn(inputCls, "h-8 min-w-0 flex-1 py-1")}
+                        className={cn(inputCls, "h-8 min-w-0 flex-1 bg-[rgba(100,116,139,0.05)] py-1")}
                       />
                       <button
                         type="button"
