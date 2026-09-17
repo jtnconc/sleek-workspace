@@ -31,20 +31,19 @@ export type ItemStatus = "active" | "completed" | "archived";
 
 /** Curated icon set a widget can be customized with. */
 export type WidgetIconName =
-  | "bell"
-  | "check"
-  | "note"
+  | "building"
+  | "bed"
+  | "star"
+  | "calendar-star"
+  | "code"
+  | "storefront"
+  | "bookmark-simple"
+  | "call-bell"
+  | "image"
+  | "push-pin"
+  | "chart-bar-horizontal"
   | "info"
-  | "users"
-  | "calendar"
-  | "phone"
-  | "plane"
-  | "key"
-  | "pin"
-  | "coffee"
-  | "briefcase"
-  | "bookmark"
-  | "chart";
+  | "tag";
 
 export interface ReminderItem {
   id: string;
