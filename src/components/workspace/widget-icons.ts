@@ -4,17 +4,19 @@ import {
   BellRinging,
   BookmarkSimple,
   Buildings,
-  CalendarStar,
+  CalendarDots,
   CallBell,
+  Carrot,
   ChartBarHorizontal,
-  Code,
+  CodeBlock,
   Image,
   Info,
   ListChecks,
+  MapPinSimple,
   Notepad,
-  PushPin,
+  PushPinSimple,
+  Rocket,
   Star,
-  Storefront,
   Tag,
 } from "@phosphor-icons/react";
 import type { ComponentType, CSSProperties } from "react";
@@ -26,45 +28,49 @@ export type WidgetIconComponent = ComponentType<{
   size?: number | string;
 }>;
 
-/** Full icon set: the 13 selectable via the customizer, plus each base
+/** Full icon set: the 15 selectable via the customizer, plus each base
  * widget type's classic fixed default (kept as-is, not part of the
  * customizable pool). */
 export const WIDGET_ICONS: Record<WidgetIconName, WidgetIconComponent> = {
-  building: Buildings,
+  buildings: Buildings,
   bed: Bed,
   star: Star,
-  "calendar-star": CalendarStar,
-  code: Code,
-  storefront: Storefront,
+  "code-block": CodeBlock,
   "bookmark-simple": BookmarkSimple,
   "call-bell": CallBell,
   image: Image,
-  "push-pin": PushPin,
+  "push-pin-simple": PushPinSimple,
   "chart-bar-horizontal": ChartBarHorizontal,
   info: Info,
   tag: Tag,
+  "map-pin-simple": MapPinSimple,
+  "calendar-dots": CalendarDots,
+  rocket: Rocket,
+  carrot: Carrot,
   "bell-ringing": BellRinging,
   "address-book": AddressBook,
   "list-checks": ListChecks,
   notepad: Notepad,
 };
 
-/** Only these 13 show up in the customizer's icon picker — the 4 classic
+/** Only these show up in the customizer's icon picker — the 4 classic
  * base-widget defaults stay fixed and aren't offered as swappable choices. */
 export const WIDGET_ICON_NAMES: WidgetIconName[] = [
-  "building",
+  "buildings",
   "bed",
   "star",
-  "calendar-star",
-  "code",
-  "storefront",
+  "code-block",
   "bookmark-simple",
   "call-bell",
   "image",
-  "push-pin",
+  "push-pin-simple",
   "chart-bar-horizontal",
   "info",
   "tag",
+  "map-pin-simple",
+  "calendar-dots",
+  "rocket",
+  "carrot",
 ];
 
 const DEFAULT_BY_TYPE: Record<WidgetType, WidgetIconName> = {
@@ -72,7 +78,7 @@ const DEFAULT_BY_TYPE: Record<WidgetType, WidgetIconName> = {
   contacts: "address-book",
   notes: "notepad",
   tasks: "list-checks",
-  sticky: "push-pin",
+  sticky: "push-pin-simple",
 };
 
 export const widgetIcon = (type: WidgetType, icon?: WidgetIconName) =>
