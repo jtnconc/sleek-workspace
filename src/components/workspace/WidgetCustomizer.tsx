@@ -1,29 +1,26 @@
 import type { WidgetAccent, WidgetIconName } from "@/workspace/types";
 import { cn } from "@/lib/utils";
-import { ACCENTS, accentVar, tintVar } from "./AccentControl";
+import { ACCENTS, tintVar } from "./AccentControl";
 import { WIDGET_ICONS, WIDGET_ICON_NAMES } from "./widget-icons";
 
 const stop = (e: React.SyntheticEvent) => e.stopPropagation();
 
 /**
  * Small customization area integrated inside the widget (no modal / overlay).
- * Opened by clicking the widget icon; lets the user pick icon, accent and
- * — for sticky notes — an ultra-light pastel background tint.
+ * Opened via the card's paintbrush option; lets the user pick an icon and a
+ * card color. The icon always renders in the app's standard navy (matching
+ * how it's drawn everywhere else) — there is no separate icon-color choice.
  */
 export function WidgetCustomizer({
   icon,
-  accent = "neutral",
   tint,
   onIcon,
-  onAccent,
   onTint,
 }: {
   icon?: WidgetIconName | undefined;
-  accent?: WidgetAccent | undefined;
   tint?: WidgetAccent | undefined;
   onIcon: (icon: WidgetIconName) => void;
-  onAccent: (accent: WidgetAccent) => void;
-  onTint?: ((tint: WidgetAccent) => void) | undefined;
+  onTint: (tint: WidgetAccent) => void;
 }) {
   return (
     <div
@@ -49,10 +46,7 @@ export function WidgetCustomizer({
                 name === icon && "bg-secondary",
               )}
             >
-              <Icon
-                size={14}
-                style={{ color: name === icon ? accentVar(accent) : undefined }}
-              />
+              <Icon size={14} className="text-primary" />
             </button>
           );
         })}
@@ -62,39 +56,19 @@ export function WidgetCustomizer({
           <button
             key={a}
             type="button"
-            aria-label={a}
+            aria-label={`${a} background`}
             onClick={(e) => {
               e.stopPropagation();
-              onAccent(a);
+              onTint(a);
             }}
             className={cn(
-              "size-[10px] rounded-full transition-transform hover:scale-125",
-              a === accent && "ring-1 ring-foreground/40 ring-offset-1",
+              "size-[14px] rounded-md border border-border transition-transform hover:scale-110",
+              a === tint && "ring-1 ring-foreground/40 ring-offset-1",
             )}
-            style={{ backgroundColor: accentVar(a) }}
+            style={{ backgroundColor: tintVar(a) }}
           />
         ))}
       </div>
-      {onTint && (
-        <div className="flex items-center gap-1.5">
-          {ACCENTS.map((a) => (
-            <button
-              key={a}
-              type="button"
-              aria-label={`${a} background`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onTint(a);
-              }}
-              className={cn(
-                "size-[14px] rounded-md border border-border transition-transform hover:scale-110",
-                a === tint && "ring-1 ring-foreground/40 ring-offset-1",
-              )}
-              style={{ backgroundColor: tintVar(a) }}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }
