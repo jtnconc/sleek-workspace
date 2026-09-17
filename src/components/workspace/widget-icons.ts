@@ -1,5 +1,7 @@
 import {
+  AddressBook,
   Bed,
+  BellRinging,
   BookmarkSimple,
   Buildings,
   CalendarStar,
@@ -8,6 +10,8 @@ import {
   Code,
   Image,
   Info,
+  ListChecks,
+  Notepad,
   PushPin,
   Star,
   Storefront,
@@ -22,7 +26,9 @@ export type WidgetIconComponent = ComponentType<{
   size?: number | string;
 }>;
 
-/** Small curated icon set available for widget customization. */
+/** Full icon set: the 13 selectable via the customizer, plus each base
+ * widget type's classic fixed default (kept as-is, not part of the
+ * customizable pool). */
 export const WIDGET_ICONS: Record<WidgetIconName, WidgetIconComponent> = {
   building: Buildings,
   bed: Bed,
@@ -37,15 +43,35 @@ export const WIDGET_ICONS: Record<WidgetIconName, WidgetIconComponent> = {
   "chart-bar-horizontal": ChartBarHorizontal,
   info: Info,
   tag: Tag,
+  "bell-ringing": BellRinging,
+  "address-book": AddressBook,
+  "list-checks": ListChecks,
+  notepad: Notepad,
 };
 
-export const WIDGET_ICON_NAMES = Object.keys(WIDGET_ICONS) as WidgetIconName[];
+/** Only these 13 show up in the customizer's icon picker — the 4 classic
+ * base-widget defaults stay fixed and aren't offered as swappable choices. */
+export const WIDGET_ICON_NAMES: WidgetIconName[] = [
+  "building",
+  "bed",
+  "star",
+  "calendar-star",
+  "code",
+  "storefront",
+  "bookmark-simple",
+  "call-bell",
+  "image",
+  "push-pin",
+  "chart-bar-horizontal",
+  "info",
+  "tag",
+];
 
 const DEFAULT_BY_TYPE: Record<WidgetType, WidgetIconName> = {
-  reminders: "call-bell",
-  contacts: "tag",
-  notes: "bookmark-simple",
-  tasks: "chart-bar-horizontal",
+  reminders: "bell-ringing",
+  contacts: "address-book",
+  notes: "notepad",
+  tasks: "list-checks",
   sticky: "push-pin",
 };
 
