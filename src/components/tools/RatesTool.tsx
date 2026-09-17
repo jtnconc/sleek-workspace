@@ -128,15 +128,15 @@ export function RatesTool() {
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
-          { label: "Rate per night", icon: BadgeDollarSign, value: money(result.avgPerNight), pillClass: "bg-badge-weekday-bg text-badge-weekday-text" },
-          { label: "Nights", icon: Moon, value: result.nightCount.toString(), pillClass: "bg-surface-3 text-foreground" },
-          { label: "Total stay", icon: Wallet, value: money(result.totalStay), pillClass: "bg-surface-3 text-foreground" },
-          { label: "Total + ITBMS", icon: Receipt, value: money(result.totalWithTax), pillClass: "bg-entity-phone/10 text-entity-phone" },
+          { label: "Rate per night", icon: BadgeDollarSign, value: money(result.avgPerNight), pillClass: "bg-primary text-primary-foreground" },
+          { label: "Nights", icon: Moon, value: result.nightCount.toString(), pillClass: "bg-primary/10 text-primary" },
+          { label: "Total stay", icon: Wallet, value: money(result.totalStay), pillClass: "bg-primary/15 text-primary" },
+          { label: "Total + ITBMS", icon: Receipt, value: money(result.totalWithTax), pillClass: "bg-primary/20 text-primary" },
         ].map((s) => (
           <div key={s.label} className="@container rounded-2xl bg-surface-2 p-4">
             <div className="flex flex-col gap-2 @[13rem]:flex-row @[13rem]:items-center @[13rem]:justify-between @[13rem]:gap-2">
               <p className="label-xs flex min-w-0 items-center gap-1">
-                <s.icon className="size-3 shrink-0" aria-hidden />
+                <s.icon className="size-3 shrink-0 text-primary" aria-hidden />
                 <span className="truncate">{s.label}</span>
               </p>
               <span
