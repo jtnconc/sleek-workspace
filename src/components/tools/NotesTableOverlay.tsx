@@ -277,6 +277,18 @@ export function NotesTableOverlay({ containerRef, editorRef }: Props) {
               () => after(() => deleteNotesTableColumn(table, col)),
               { disabled: colCount <= 1, destructive: true },
             )}
+
+            <div className="my-1 h-px bg-border" />
+
+            {menuItem(
+              "Delete Table",
+              () =>
+                after(() => {
+                  table.remove();
+                }),
+
+              { destructive: true },
+            )}
           </div>
         )}
       </div>
