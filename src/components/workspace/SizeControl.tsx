@@ -94,6 +94,28 @@ export function SizeControl({
               <SizeGlyph size={s} active={s === value} />
             </button>
           ))}
+          {onCustomize ? (
+            <>
+              <span className="h-3 w-px bg-border" aria-hidden="true" />
+              <button
+                type="button"
+                aria-label="Customize card"
+                aria-pressed={customizing}
+                title="Customize card"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCustomize();
+                  setOpen(false);
+                }}
+                className={cn(
+                  "flex size-[18px] items-center justify-center rounded-[5px] transition-colors hover:bg-secondary",
+                  customizing ? "text-foreground" : "text-muted-foreground/60",
+                )}
+              >
+                <Paintbrush className="size-[11px]" />
+              </button>
+            </>
+          ) : null}
           {onToggleLock ? (
             <>
               <span className="h-3 w-px bg-border" aria-hidden="true" />
@@ -131,28 +153,6 @@ export function SizeControl({
                 className="flex size-[18px] items-center justify-center rounded-[5px] text-muted-foreground/60 transition-colors hover:bg-secondary hover:text-foreground"
               >
                 <Undo2 className="size-[11px]" />
-              </button>
-            </>
-          ) : null}
-          {onCustomize ? (
-            <>
-              <span className="h-3 w-px bg-border" aria-hidden="true" />
-              <button
-                type="button"
-                aria-label="Customize card"
-                aria-pressed={customizing}
-                title="Customize card"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onCustomize();
-                  setOpen(false);
-                }}
-                className={cn(
-                  "flex size-[18px] items-center justify-center rounded-[5px] transition-colors hover:bg-secondary",
-                  customizing ? "text-foreground" : "text-muted-foreground/60",
-                )}
-              >
-                <Paintbrush className="size-[11px]" />
               </button>
             </>
           ) : null}
