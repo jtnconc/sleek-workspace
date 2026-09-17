@@ -43,7 +43,11 @@ export type WidgetIconName =
   | "push-pin"
   | "chart-bar-horizontal"
   | "info"
-  | "tag";
+  | "tag"
+  | "bell-ringing"
+  | "address-book"
+  | "list-checks"
+  | "notepad";
 
 export interface ReminderItem {
   id: string;
