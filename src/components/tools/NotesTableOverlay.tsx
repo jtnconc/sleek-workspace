@@ -70,7 +70,7 @@ export function NotesTableOverlay({ containerRef, editorRef }: Props) {
       setHover((prev) => {
         if (!prev || !prev.table.isConnected) return null;
         const r = prev.table.getBoundingClientRect();
-        const GUTTER = 28 juan;
+        const GUTTER = 28;
 
         const withinGutter =
           e.clientX >= r.left - GUTTER &&
