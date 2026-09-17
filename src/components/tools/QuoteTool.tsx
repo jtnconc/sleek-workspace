@@ -707,7 +707,7 @@ const toggleItem = (itemId: string) => {
                                       : "+ Manage/Edit room types",
                                 },
                               ]}
-                              className="h-8 border-primary bg-primary px-2 py-1 font-semibold text-primary-foreground shadow-none [&>svg]:text-primary-foreground [&>svg]:opacity-90"
+                              className="h-8 border-primary/30 bg-primary/15 px-2 py-1 font-semibold text-primary shadow-none [&>svg]:text-primary [&>svg]:opacity-90"
                               aria-label={L.roomType}
                             />
                           </div>
