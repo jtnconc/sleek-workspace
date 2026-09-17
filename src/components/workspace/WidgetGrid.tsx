@@ -409,7 +409,7 @@ export function WidgetGrid() {
         const isDragging = dragId === w.id;
         const accent = accentVar(w.accent);
         const isSticky = w.type === "sticky";
-        const isCustomizing = customizing === w.id && isSticky;
+        const isCustomizing = customizing === w.id;
         const pulse = pulses[w.id];
         const isLocked = isSizeLocked(w);
         const isResizing = resize?.id === w.id;
@@ -446,7 +446,7 @@ export function WidgetGrid() {
             }}
             onClick={() => activate(w.id)}
             style={{
-              ...(isSticky ? { backgroundColor: tintVar(w.tint) } : {}),
+              ...(w.tint ? { backgroundColor: tintVar(w.tint) } : {}),
               ...(active
                 ? { borderColor: `color-mix(in oklch, ${accent} 35%, transparent)` }
                 : {}),
@@ -481,20 +481,9 @@ export function WidgetGrid() {
             >
               <div className="flex min-w-0 items-center gap-2">
                 {isSticky ? (
-                  <button
-                    type="button"
-                    aria-label="Customize sticky note"
-                    title="Customize sticky note"
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onDragStart={(e) => e.preventDefault()}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCustomizing((v) => (v === w.id ? null : w.id));
-                    }}
-                    className="flex size-5 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-secondary"
-                  >
+                  <span className="flex size-5 shrink-0 items-center justify-center">
                     <Icon size={15} className="text-primary" />
-                  </button>
+                  </span>
                 ) : widgetSupportsHeaderToggle(w.content.kind) ? (
                   <button
                     type="button"
@@ -570,6 +559,8 @@ export function WidgetGrid() {
                     "Return note to Notes list"
 
                   }
+                  onCustomize={() => setCustomizing((v) => (v === w.id ? null : w.id))}
+                  customizing={isCustomizing}
                 />
               </div>
             </header>
