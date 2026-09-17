@@ -1,5 +1,4 @@
 import {
-  AddressBook,
   Bed,
   BellRinging,
   BookmarkSimple,
