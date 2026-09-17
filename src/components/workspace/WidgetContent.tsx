@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Trash } from "@phosphor-icons/react";
+import { DotsThreeCircle, Trash } from "@phosphor-icons/react";
 import {
   AlarmClock,
   ArrowUpRight,
@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   Clock,
   Flag,
-  MoreHorizontal,
   Pencil,
   Pin,
   Plus,
@@ -159,7 +158,7 @@ function ItemActions({
               revealed ? "opacity-100" : "opacity-0 group-hover:opacity-40",
             )}
           >
-            <MoreHorizontal className="size-3.5" />
+            <DotsThreeCircle className="size-3.5" />
           </button>
         </PopoverTrigger>
         <PopoverContent
