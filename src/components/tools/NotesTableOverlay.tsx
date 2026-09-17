@@ -53,15 +53,32 @@ export function NotesTableOverlay({ containerRef, editorRef }: Props) {
       if (!target) return;
       if (target.closest("[data-table-overlay-control]")) return;
       const cell = target.closest("td, th") as HTMLTableCellElement | null;
-      const table = cell?.closest(
+      const cellTable = cell?.closest(
         "table[data-notes-table]",
       ) as HTMLTableElement | null;
-      if (!cell || !table || !editorRef.current?.contains(table)) {
-        setHover(null);
+      if (cell && cellTable && editorRef.current?.contains(cellTable)) {
+        const row = cell.parentElement as HTMLTableRowElement;
+        setHover({ table: cellTable, col: cell.cellIndex, row: row.rowIndex });
         return;
       }
-      const row = cell.parentElement as HTMLTableRowElement;
-      setHover({ table, col: cell.cellIndex, row: row.rowIndex });
+
+      // Not directly over a cell — if the cursor is still within the gutter
+      // around the currently hovered table (where the floating controls
+      // live, above and to the left of it), keep the hover alive instead of
+      // dropping it, so the pointer can travel from the table to the
+      // pill/grip without the control vanishing mid-way.
+      setHover((prev) => {
+        if (!prev || !prev.table.isConnected) return null;
+        const r = prev.table.getBoundingClientRect();
+        const GUTTER = 28 juan;
+
+        const withinGutter =
+          e.clientX >= r.left - GUTTER &&
+          e.clientX <= r.right + 4 &&
+          e.clientY >= r.top - GUTTER &&
+          e.clientY <= r.bottom + 4;
+        return withinGutter ? prev : null;
+      });
     };
     const onLeave = () => {
       if (busyRef.current || menu) return;
