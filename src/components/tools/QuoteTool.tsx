@@ -558,6 +558,7 @@ const toggleItem = (itemId: string) => {
               <label className="flex w-[7.5rem] shrink-0 flex-col gap-1">
                 <span className="label-xs">{lang === "es" ? "Etiqueta" : "Treatment"}</span>
                 <SoftSelect
+                  className="h-7 w-auto shrink-0 rounded-full border-primary/30 bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-primary [&>svg]:text-primary [&>svg]:opacity-90"
                   value={quote.salutation ?? "Estimado"}
                   onChange={(v) => {
                     // Selects commit on selection — log immediately.
