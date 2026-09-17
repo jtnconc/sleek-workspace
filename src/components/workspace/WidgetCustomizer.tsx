@@ -34,6 +34,7 @@ export function WidgetCustomizer({
       onDragStart={(e) => e.preventDefault()}
       className="mb-3 space-y-2 rounded-xl bg-surface-2 p-2"
     >
+      {iconEditable && (
       <div className="flex flex-wrap gap-1">
         {WIDGET_ICON_NAMES.map((name) => {
           const Icon = WIDGET_ICONS[name];
