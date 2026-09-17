@@ -77,7 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Reservation Workspace" },
+      { title: "Sleek Workspace" },
       {
         name: "description",
         content: "A digital reservation desk that adapts to the task being performed.",
