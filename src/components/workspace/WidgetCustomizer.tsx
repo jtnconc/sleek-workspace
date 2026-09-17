@@ -16,11 +16,16 @@ export function WidgetCustomizer({
   tint,
   onIcon,
   onTint,
+  iconEditable = true,
 }: {
   icon?: WidgetIconName | undefined;
   tint?: WidgetAccent | undefined;
   onIcon: (icon: WidgetIconName) => void;
   onTint: (tint: WidgetAccent) => void;
+  /** false hides the icon picker entirely, leaving only card color — used
+   * for base widgets (Reminders/Contacts/Tasks/Notes) so their identifying
+   * icon can't be swapped away. */
+  iconEditable?: boolean;
 }) {
   return (
     <div
