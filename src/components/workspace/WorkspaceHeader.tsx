@@ -278,8 +278,9 @@ export function WorkspaceHeader({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter" && hits.length > 0) {
-                        hits[0].onOpen();
+                      const first = hits[0];
+                      if (e.key === "Enter" && first) {
+                        first.onOpen();
                         closeSearch();
                       }
                     }}
