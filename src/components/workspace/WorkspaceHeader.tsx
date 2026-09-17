@@ -277,6 +277,12 @@ export function WorkspaceHeader({
                     ref={searchInputRef}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && hits.length > 0) {
+                        hits[0].onOpen();
+                        closeSearch();
+                      }
+                    }}
                     placeholder="Search"
                     className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
                   />
