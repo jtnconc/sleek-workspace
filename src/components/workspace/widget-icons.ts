@@ -32,7 +32,7 @@ export type WidgetIconComponent = ComponentType<{
  * widget type's classic fixed default (kept as-is, not part of the
  * customizable pool). */
 export const WIDGET_ICONS: Record<WidgetIconName, WidgetIconComponent> = {
-  buildings: Buildings,
+  building: Building,
   bed: Bed,
   star: Star,
   "code-block": CodeBlock,
@@ -56,7 +56,7 @@ export const WIDGET_ICONS: Record<WidgetIconName, WidgetIconComponent> = {
 /** Only these show up in the customizer's icon picker — the 4 classic
  * base-widget defaults stay fixed and aren't offered as swappable choices. */
 export const WIDGET_ICON_NAMES: WidgetIconName[] = [
-  "buildings",
+  "building",
   "bed",
   "star",
   "code-block",
