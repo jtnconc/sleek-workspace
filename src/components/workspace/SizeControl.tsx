@@ -30,6 +30,8 @@ export function SizeControl({
   onToggleLock,
   onReturn,
   returnLabel = "Return note to Notes list",
+  onCustomize,
+  customizing = false,
 }: {
   value: WidgetSize;
   onChange: (size: WidgetSize) => void;
