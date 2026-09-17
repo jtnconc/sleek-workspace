@@ -630,8 +630,8 @@ const toggleItem = (itemId: string) => {
                         </span>
                       )}
                       <span className="shrink-0 rounded-full border border-border bg-white px-2.5 py-0.5 text-[12px] font-medium text-foreground tabular-nums">
-                        {formatDate(item.arrival || quote.arrival, lang)} →{" "}
-                        {formatDate(item.departure || quote.departure, lang)}
+                        {formatDateShort(item.arrival || quote.arrival).slice(0, -5)} →{" "}
+                        {formatDateShort(item.departure || quote.departure)}
                       </span>
                       <span className="shrink-0 rounded-full border border-border bg-white px-2.5 py-0.5 text-[12px] font-semibold text-foreground tabular-nums">
                         {money(lineSubtotal(item, nights))}
@@ -641,7 +641,7 @@ const toggleItem = (itemId: string) => {
                         onClick={() => toggleItem(item.id)}
                         aria-expanded="false"
                         aria-label={lang === "es" ? "Expandir habitación" : "Expand room"}
-                        className="ml-auto shrink-0 rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                        className="relative z-10 ml-auto shrink-0 rounded-full bg-surface-2 p-1.5 text-muted-foreground transition-colors before:absolute before:inset-y-0 before:-left-3 before:w-3 before:bg-gradient-to-r before:from-transparent before:to-surface-2 before:content-[''] hover:bg-secondary hover:text-foreground"
                       >
                         <ChevronDown className="size-4" />
                       </button>
