@@ -59,10 +59,10 @@
   --ease-desk: cubic-bezier(0.22, 1, 0.36, 1);
   --color-rate-blue-bg: oklch(0.95 0.025 250);
   --color-rate-blue-text: oklch(0.42 0.1 250);
-  --color-badge-weekday-bg: oklch(0.94 0.03 250);
-  --color-badge-weekday-text: oklch(0.42 0.11 250);
-  --color-badge-weekend-bg: oklch(0.95 0.035 80);
-  --color-badge-weekend-text: oklch(0.55 0.13 80);
+  --color-badge-weekday-bg: oklch(0.94 0.02 258);
+  --color-badge-weekday-text: oklch(0.42 0.08 258);
+  --color-badge-weekend-bg: oklch(0.87 0.035 258);
+  --color-badge-weekend-text: oklch(0.3 0.07 258);
 }
 
 :root {
