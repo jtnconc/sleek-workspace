@@ -473,11 +473,16 @@ export function WidgetGrid() {
             ) : null}
             <header
               className={cn(
-                "flex items-center justify-between gap-2",
-                isSticky
-                  ? "mb-3"
-                  : "mb-3 border-b border-border/50 pb-2 mx-1"
+                "flex items-center justify-between gap-2 mb-3",
+                w.tint
+                  ? "border-b pb-2 mx-1"
+                  : !isSticky && "border-b border-border/50 pb-2 mx-1",
               )}
+              style={
+                w.tint
+                  ? { borderColor: "color-mix(in oklch, var(--primary) 40%, transparent)" }
+                  : undefined
+              }
             >
               <div className="flex min-w-0 items-center gap-2">
                 {isSticky ? (
