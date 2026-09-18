@@ -525,3 +525,49 @@ export function getNotesFontFamily(): string | null {
   if (!el) return null;
   return window.getComputedStyle(el).fontFamily || null;
 }
+
+export type NotesTableSelection = { table: HTMLTableElement; cells: HTMLTableCellElement[] } | null;
+
+let tableSelection: NotesTableSelection = null;
+
+const tableSelectionListeners = new Set<() => void>();
+
+export function getNotesTableSelection(): NotesTableSelection {
+  return tableSelection;
+}
+
+export function setNotesTableSelection(sel: NotesTableSelection) {
+  tableSelection?.cells.forEach((c) => c.classList.remove("notes-table-cell-selected"));
+  tableSelection = sel;
+  sel?.cells.forEach((c) => c.classList.add("notes-table-cell-selected"));
+  tableSelectionListeners.forEach((fn) => fn());
+}
+
+export function clearNotesTableSelection() {
+  if (tableSelection) setNotesTableSelection(null);
+}
+
+export function subscribeNotesTableSelection(fn: () => void) {
+  tableSelectionListeners.add(fn);
+  return () => tableSelectionListeners.delete(fn);
+}
+
+/** Applies (or removes, if every cell already has it) bold/italic across the
+ * given cells directly, bypassing execCommand — used when a whole row/column
+ * is selected via our own selection instead of the native browser one. */
+export function applyNotesTableFormat(cells: HTMLTableCellElement[], tag: "strong" | "em") {
+  if (cells.length === 0) return;
+  const allWrapped = cells.every((c) => {
+    const only = c.firstElementChild;
+    return (
+      c.children.length === 1 &&
+      only?.tagName.toLowerCase() === tag &&
+      only.textContent === c.textContent
+    );
+  });
+  cells.forEach((cell) => {
+    const text = cell.textContent || "\u00A0";
+    cell.innerHTML = allWrapped ? text : `<${tag}>${text}</${tag}>`;
+  });
+  notifyNotesTableChange();
+}
