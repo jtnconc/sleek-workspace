@@ -33,6 +33,11 @@ export function WidgetCustomizer({
       onPointerDown={stop}
       onDragStart={(e) => e.preventDefault()}
       className="mb-3 space-y-2 rounded-xl bg-surface-2 p-2"
+      style={
+        tint
+          ? { backgroundColor: `color-mix(in oklch, ${tintVar(tint)} 85%, black 12%)` }
+          : undefined
+      }
     >
       {iconEditable && (
       <div className="flex flex-wrap gap-1">
