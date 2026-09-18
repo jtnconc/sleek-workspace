@@ -8,6 +8,7 @@ import {
   deleteNotesTableRow,
   notesTableColumnCount,
   notifyNotesTableChange,
+  setNotesTableSelection,
   NOTES_TABLE_MAX_COLS,
   NOTES_TABLE_MAX_ROWS,
   reorderNotesTableRow,
@@ -279,6 +280,16 @@ export function NotesTableOverlay({ containerRef, editorRef }: Props) {
         </button>
         {menu === "col" && (
           <div className="absolute left-1/2 top-[22px] z-30 w-[170px] -translate-x-1/2 rounded-lg border border-border bg-popover p-1 shadow-lg">
+            {menuItem("Select Column", () => {
+              const cells = rows
+                .map((r) => r.cells[col])
+                .filter((c): c is HTMLTableCellElement => Boolean(c));
+              setNotesTableSelection({ table, cells });
+              setMenu(null);
+            })}
+
+            <div className="my-1 h-px bg-border" />
+
             {menuItem(
               "Add Column Before",
               () => after(() => addNotesTableColumn(table, col, "before")),
@@ -328,6 +339,14 @@ export function NotesTableOverlay({ containerRef, editorRef }: Props) {
         </button>
         {menu === "row" && (
           <div className="absolute left-[22px] top-0 z-30 w-[150px] rounded-lg border border-border bg-popover p-1 shadow-lg">
+            {menuItem("Select Row", () => {
+              const cells = Array.from(rows[row]?.cells ?? []) as HTMLTableCellElement[];
+              setNotesTableSelection({ table, cells });
+              setMenu(null);
+            })}
+
+            <div className="my-1 h-px bg-border" />
+
             {menuItem(
               "Add Row Above",
               () => after(() => addNotesTableRow(table, row, "above")),
