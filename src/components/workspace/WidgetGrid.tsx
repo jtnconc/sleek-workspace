@@ -117,6 +117,26 @@ export function WidgetGrid() {
   const [minimizedLayout, setMinimizedLayout] = useState<"text" | "icon">("icon");
   const [visibleExtraCount, setVisibleExtraCount] = useState(0);
 
+  // Closing customizer/filter panels by clicking anywhere outside the card
+  // that opened them, instead of requiring the same toggle to be clicked
+  // again.
+  useEffect(() => {
+    if (!customizing && !filtersOpenId) return;
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target as Node;
+      const openId = customizing ?? filtersOpenId;
+      if (!openId) return;
+      const card = sectionRefs.current.get(openId);
+      if (card && !card.contains(target)) {
+        setCustomizing(null);
+        setFiltersOpenId(null);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [customizing, filtersOpenId]);
+
+
   const baseWidgets = ordered.filter((widget) => BASE_WIDGET_TYPES.has(widget.type));
   const extraWidgets = ordered.filter((widget) => !BASE_WIDGET_TYPES.has(widget.type));
 
