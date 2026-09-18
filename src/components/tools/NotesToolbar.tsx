@@ -22,6 +22,8 @@ import {
   applyNotesHighlight,
   restoreNotesSelection,
   saveNotesSelection,
+  getNotesTableSelection,
+  applyNotesTableFormat,
 } from "./notes-format";
 
 const COLORS = [
@@ -84,6 +86,11 @@ export function NotesToolbar({ visibleCount }: NotesToolbarProps) {
   }, []);
 
   const toggle = (command: "bold" | "italic") => {
+    const tableSelection = getNotesTableSelection();
+    if (tableSelection) {
+      applyNotesTableFormat(tableSelection.cells, command === "bold" ? "strong" : "em");
+      return;
+    }
     execNotesCommand(command);
     // Reflect the new state immediately so combined bold+italic both stay lit.
     syncActive();
