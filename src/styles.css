@@ -283,6 +283,10 @@
   border-bottom: none !important;
 }
 
+.notes-table-cell-selected {
+  background-color: rgba(100, 116, 139, 0.25) !important;
+}
+
 
 .notes-rich img {
   display: block;
