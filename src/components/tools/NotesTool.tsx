@@ -24,6 +24,8 @@ import {
   restoreNotesCaret,
   saveNotesCaret,
   notifyNotesTableChange,
+  clearNotesTableSelection,
+  getNotesTableSelection,
 } from "./notes-format";
 
 import { CallHistoryPanel } from "./CallHistoryPanel";
@@ -238,7 +240,14 @@ export function NotesTool() {
         <div
           ref={paperRef}
           className="notes-paper relative min-h-[280px] flex-1 overflow-y-auto rounded-xl"
-          onClick={() => editorRef.current?.focus()}
+          onClick={(e) => {
+            editorRef.current?.focus();
+            const target = e.target as HTMLElement;
+            const sel = getNotesTableSelection();
+            if (sel && !target.closest(".notes-table-cell-selected")) {
+              clearNotesTableSelection();
+            }
+          }}
         >
           
           <div
