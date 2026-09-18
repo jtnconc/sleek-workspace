@@ -23,6 +23,7 @@ import {
   resetEditorSelection,
   restoreNotesCaret,
   saveNotesCaret,
+  notifyNotesTableChange,
 } from "./notes-format";
 
 import { CallHistoryPanel } from "./CallHistoryPanel";
@@ -293,6 +294,48 @@ export function NotesTool() {
               // in the editor (and thus never gets persisted or re-rendered).
               const html = e.clipboardData.getData("text/html");
               if (!html) return; // plain-text paste is inert; let it through
+
+              // Pasting a table (Excel/Sheets/Word) while the caret sits
+              // inside one of our own tables distributes the pasted grid
+              // into our existing cells instead of nesting a second table.
+              const anchor = document.getSelection()?.anchorNode ?? null;
+              const anchorEl =
+                anchor instanceof Element ? anchor : anchor?.parentElement ?? null;
+              const targetCell = anchorEl?.closest("td, th") as HTMLTableCellElement | null;
+              const targetTable = targetCell?.closest(
+                "table[data-notes-table]",
+              ) as HTMLTableElement | null;
+
+              if (targetCell && targetTable && targetCell.parentElement) {
+                const doc = new DOMParser().parseFromString(html, "text/html");
+                const pastedTable = doc.querySelector("table");
+
+                if (pastedTable) {
+                  e.preventDefault();
+                  const grid = Array.from(pastedTable.rows).map((r) =>
+                    Array.from(r.cells).map((c) => c.textContent?.trim() ?? ""),
+                  );
+
+                  const startRow = Array.from(targetTable.rows).indexOf(
+                    targetCell.parentElement as HTMLTableRowElement,
+                  );
+                  const startCol = targetCell.cellIndex;
+
+                  grid.forEach((rowValues, i) => {
+                    const destRow = targetTable.rows[startRow + i];
+                    if (!destRow) return;
+
+                    rowValues.forEach((value, j) => {
+                      const destCell = destRow.cells[startCol + j];
+                      if (destCell) destCell.textContent = value || "\u00A0";
+                    });
+                  });
+
+                  notifyNotesTableChange();
+                  return;
+                }
+              }
+
               e.preventDefault();
               document.execCommand("insertHTML", false, sanitizeHtml(html));
             }}
