@@ -1,14 +1,13 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { CopySimple, DownloadSimple, Eye, PencilSimple, Trash } from "@phosphor-icons/react";
+import { CopySimple, DownloadSimple, Eye, PencilSimple, Plus, Trash } from "@phosphor-icons/react";
 import {
   Check,
   ChevronDown,
   ChevronUp,
   History,
   ImageUp,
-  Plus,
   Trash2,
   X,
 } from "lucide-react";
@@ -214,6 +213,7 @@ export function QuoteTool({
   const {
     quote,
     updateQuote,
+    resetQuote,
     logQuoteField,
     quoteHistory,
     loadQuote,
@@ -543,6 +543,15 @@ const toggleItem = (itemId: string) => {
                   {STATUS_PILL_LABEL[quote.status][lang]}
                 </span>
               )}
+              <button
+                type="button"
+                onClick={() => resetQuote()}
+                aria-label="Nueva cotización"
+                title="Nueva cotización"
+                className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              >
+                <Plus className="size-3.5" />
+              </button>
             </div>
           </header>
 
