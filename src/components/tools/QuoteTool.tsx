@@ -2,17 +2,7 @@ import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { CopySimple, DownloadSimple, Eye, FilePlus, PencilSimple, Plus, Trash } from "@phosphor-icons/react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Check,
   ChevronDown,
@@ -248,6 +238,7 @@ const [showDetails, setShowDetails] = useState(false);
 const [showRooms, setShowRooms] = useState(false);
 const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set());
 /** History quote id currently awaiting a second tap to confirm deletion. */
+ const [confirmingReset, setConfirmingReset] = useState(false);
  const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
  const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
 
