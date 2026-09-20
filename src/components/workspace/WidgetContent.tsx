@@ -841,7 +841,7 @@ function ContactsContent({
         onToggle={onToggleFilter}
         open={filtersOpen}
       />
-      <ul className="grid grid-cols-1 gap-2.5 @[22rem]:grid-cols-2">
+      <ul className={cn("grid gap-2.5", widget.twoColumn && widget.width >= 2 ? "grid-cols-2" : "grid-cols-1")}>
       {visible.length === 0 && (
         <EmptyState
           text={searchQuery.trim() ? "No contacts match your search." : "No contacts added yet. End a note with # to add one."}
@@ -1070,7 +1070,7 @@ function NotesContent({ widget }: { widget: Widget }) {
     );
 
   return (
-    <ul className="space-y-2">
+    <ul className={cn(widget.twoColumn && widget.width >= 2 ? "grid grid-cols-2 gap-2" : "space-y-2")}>
       {ordered.map((n) => {
         const isConfirming = confirming === n.id;
         return (
