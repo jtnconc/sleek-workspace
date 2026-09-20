@@ -55,10 +55,10 @@ export function SizeControl({
   customizing?: boolean;
 
   /** toggles the two-column list layout for this widget */
-  onToggleColumns?: () => void;
+  onToggleColumns?: (() => void) | undefined;
 
   /** whether the two-column layout is currently on, for the active-state highlight */
-  columnsOn?: boolean;
+  columnsOn?: boolean | undefined;
 
   /** optional accent color used for the collapsed dot */
   accent?: string;
