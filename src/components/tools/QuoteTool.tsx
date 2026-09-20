@@ -2,17 +2,7 @@ import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { CopySimple, DownloadSimple, Eye, FilePlus, PencilSimple, Plus, Trash } from "@phosphor-icons/react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Check,
   ChevronDown,
@@ -248,6 +238,7 @@ const [showDetails, setShowDetails] = useState(false);
 const [showRooms, setShowRooms] = useState(false);
 const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set());
 /** History quote id currently awaiting a second tap to confirm deletion. */
+ const [confirmingReset, setConfirmingReset] = useState(false);
  const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
  const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
 
@@ -259,6 +250,14 @@ const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set(
       ),
     [quote.items],
   );
+
+  // True when the quote has no data at all (recipient, company, guest, and
+  // no row with a rate or guest name) — a new quote can reset without asking.
+  const isQuoteEmpty =
+    !quote.recipient.trim() &&
+    !quote.company.trim() &&
+    !quote.guest.trim() &&
+    quote.items.every((i) => !i.ratePerNight && !i.guestName?.trim());
 
   // Clear the validation banner as soon as every required field is filled in.
   useEffect(() => {
@@ -554,32 +553,50 @@ const toggleItem = (itemId: string) => {
                   {STATUS_PILL_LABEL[quote.status][lang]}
                 </span>
               )}
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
+              <Popover open={confirmingReset} onOpenChange={setConfirmingReset}>
+                <PopoverTrigger asChild>
                   <button
                     type="button"
                     aria-label="Nueva cotización"
                     title="Nueva cotización"
+                    onClick={() => {
+                      if (isQuoteEmpty) {
+                        resetQuote();
+                      } else {
+                        setConfirmingReset(true);
+                      }
+                    }}
                     className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                   >
                     <FilePlus className="size-3.5" />
                   </button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>¿Iniciar una nueva cotización?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Se limpiará la cotización actual (huésped, habitaciones, tarifas). El hotel y el idioma se
-                      mantienen. La cotización actual queda guardada en el historial, así que podrás recuperarla desde
-                      ahí si la necesitas.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => resetQuote()}>Sí, nueva cotización</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-64 rounded-2xl p-3">
+                  <p className="text-[12.5px] font-semibold">¿Nueva cotización?</p>
+                  <p className="mt-1 text-[12px] text-muted-foreground">
+                    Se limpiará la cotización actual. Queda guardada en el historial.
+                  </p>
+                  <div className="mt-3 flex items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setConfirmingReset(false)}
+                      className="rounded-full px-3 py-1 text-[12px] transition-colors hover:bg-secondary"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        resetQuote();
+                        setConfirmingReset(false);
+                      }}
+                      className="rounded-full bg-foreground px-3 py-1 text-[12px] text-background transition-opacity hover:opacity-90"
+                    >
+                      Confirmar
+                    </button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </header>
 
