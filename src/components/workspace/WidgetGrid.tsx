@@ -516,6 +516,7 @@ export function WidgetGrid() {
                     onDragStart={(e) => e.preventDefault()}
                     onClick={(e) => {
                       e.stopPropagation();
+                      activate(w.id);
                       setFiltersOpenId((v) => (v === w.id ? null : w.id));
                     }}
                     style={{
