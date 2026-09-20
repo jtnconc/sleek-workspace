@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { CopySimple, DownloadSimple, Eye, PencilSimple, Plus, Trash } from "@phosphor-icons/react";
+import { CopySimple, DownloadSimple, Eye, FilePlus, PencilSimple, Plus, Trash } from "@phosphor-icons/react";
 import {
   Check,
   ChevronDown,
@@ -550,7 +550,7 @@ const toggleItem = (itemId: string) => {
                 title="Nueva cotización"
                 className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               >
-                <Plus className="size-3.5" />
+                <FilePlus className="size-3.5" />
               </button>
             </div>
           </header>
