@@ -251,6 +251,14 @@ const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set(
     [quote.items],
   );
 
+  // True when the quote has no data at all (recipient, company, guest, and
+  // no row with a rate or guest name) — a new quote can reset without asking.
+  const isQuoteEmpty =
+    !quote.recipient.trim() &&
+    !quote.company.trim() &&
+    !quote.guest.trim() &&
+    quote.items.every((i) => !i.ratePerNight && !i.guestName?.trim());
+
   // Clear the validation banner as soon as every required field is filled in.
   useEffect(() => {
     if (!showQuoteErrors) return;
