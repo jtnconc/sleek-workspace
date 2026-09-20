@@ -3,6 +3,17 @@ import { ClientOnly } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { CopySimple, DownloadSimple, Eye, FilePlus, PencilSimple, Plus, Trash } from "@phosphor-icons/react";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Check,
   ChevronDown,
   ChevronUp,
@@ -543,15 +554,32 @@ const toggleItem = (itemId: string) => {
                   {STATUS_PILL_LABEL[quote.status][lang]}
                 </span>
               )}
-              <button
-                type="button"
-                onClick={() => resetQuote()}
-                aria-label="Nueva cotización"
-                title="Nueva cotización"
-                className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-              >
-                <FilePlus className="size-3.5" />
-              </button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="Nueva cotización"
+                    title="Nueva cotización"
+                    className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  >
+                    <FilePlus className="size-3.5" />
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>¿Iniciar una nueva cotización?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Se limpiará la cotización actual (huésped, habitaciones, tarifas). El hotel y el idioma se
+                      mantienen. La cotización actual queda guardada en el historial, así que podrás recuperarla desde
+                      ahí si la necesitas.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => resetQuote()}>Sí, nueva cotización</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </header>
 
