@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Lock, Paintbrush, Unlock } from "lucide-react";
-import { ArrowSquareIn, TextColumns } from "@phosphor-icons/react";
+import { Undo2 } from "lucide-react";
+import { ArrowSquareIn, LockKey, LockKeyOpen, PaintBrushBroad, TextColumns } from "@phosphor-icons/react";
 import type { WidgetSize } from "@/workspace/types";
 import { cn } from "@/lib/utils";
 
