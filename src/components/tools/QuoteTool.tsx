@@ -544,61 +544,63 @@ const toggleItem = (itemId: string) => {
               <p className="tabular-nums text-[11px] text-muted-foreground">
                 {L.quotationNo} {quoteNumber(quote)}
               </p>
-              {quote.status && (
-                <span
-                  className={cn(
-                    "inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-[11px] font-medium",
-                    STATUS_PILL_CLASS[quote.status],
-                  )}
-                >
-                  {STATUS_PILL_LABEL[quote.status][lang]}
-                </span>
-              )}
-              <Popover open={confirmingReset} onOpenChange={setConfirmingReset}>
-                <PopoverTrigger asChild>
-                  <button
-                    type="button"
-                    aria-label="Nueva cotización"
-                    title="Nueva cotización"
-                    onClick={() => {
-                      if (isQuoteEmpty) {
-                        resetQuote();
-                      } else {
-                        setConfirmingReset(true);
-                      }
-                    }}
-                    className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              <div className="flex items-center gap-1.5">
+                {quote.status && (
+                  <span
+                    className={cn(
+                      "inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-[11px] font-medium",
+                      STATUS_PILL_CLASS[quote.status],
+                    )}
                   >
-                    <FilePlus className="size-3.5" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent align="end" className="w-64 rounded-2xl p-3">
-                  <p className="text-[12.5px] font-semibold">¿Nueva cotización?</p>
-                  <p className="mt-1 text-[12px] text-muted-foreground">
-                    Se limpiará la cotización actual. Queda guardada en el historial.
-                  </p>
-                  <div className="mt-3 flex items-center justify-end gap-2">
+                    {STATUS_PILL_LABEL[quote.status][lang]}
+                  </span>
+                )}
+                <Popover open={confirmingReset} onOpenChange={setConfirmingReset}>
+                  <PopoverTrigger asChild>
                     <button
                       type="button"
-                      onClick={() => setConfirmingReset(false)}
-                      className="rounded-full px-3 py-1 text-[12px] transition-colors hover:bg-secondary"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      type="button"
+                      aria-label="Nueva cotización"
+                      title="Nueva cotización"
                       onClick={() => {
-                        archiveQuote();
-                        resetQuote();
-                        setConfirmingReset(false);
+                        if (isQuoteEmpty) {
+                          resetQuote();
+                        } else {
+                          setConfirmingReset(true);
+                        }
                       }}
-                      className="rounded-full bg-foreground px-3 py-1 text-[12px] text-background transition-opacity hover:opacity-90"
+                      className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                     >
-                      Confirmar
+                      <FilePlus className="size-3.5" />
                     </button>
-                  </div>
-                </PopoverContent>
-              </Popover>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-64 rounded-2xl p-3">
+                    <p className="text-[12.5px] font-semibold">¿Nueva cotización?</p>
+                    <p className="mt-1 text-[12px] text-muted-foreground">
+                      Se limpiará la cotización actual. Queda guardada en el historial.
+                    </p>
+                    <div className="mt-3 flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setConfirmingReset(false)}
+                        className="rounded-full px-3 py-1 text-[12px] transition-colors hover:bg-secondary"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          archiveQuote();
+                          resetQuote();
+                          setConfirmingReset(false);
+                        }}
+                        className="rounded-full bg-foreground px-3 py-1 text-[12px] text-background transition-opacity hover:opacity-90"
+                      >
+                        Confirmar
+                      </button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
           </header>
 
