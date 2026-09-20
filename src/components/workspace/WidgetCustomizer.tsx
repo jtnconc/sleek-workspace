@@ -18,6 +18,9 @@ export function WidgetCustomizer({
   onIcon,
   onTint,
   iconEditable = true,
+  twoColumn,
+  onToggleTwoColumn,
+  showColumnsToggle = false,
 }: {
   icon?: WidgetIconName | undefined;
   tint?: WidgetAccent | undefined;
@@ -27,6 +30,9 @@ export function WidgetCustomizer({
    * for base widgets (Reminders/Contacts/Tasks/Notes) so their identifying
    * icon can't be swapped away. */
   iconEditable?: boolean;
+  twoColumn?: boolean;
+  onToggleTwoColumn: (v: boolean) => void;
+  showColumnsToggle?: boolean;
 }) {
   return (
     <div
