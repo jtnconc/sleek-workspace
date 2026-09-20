@@ -98,7 +98,7 @@ export function SizeControl({
             onClick={(e) => {
               e.stopPropagation();
               if (locked) return;
-              const next = SIZES[(SIZES.indexOf(value) + 1) % SIZES.length];
+              const next = SIZES[(SIZES.indexOf(value) + 1) % SIZES.length]!;
               onChange(next);
             }}
             className="flex size-[18px] items-center justify-center rounded-[5px] transition-colors hover:bg-[var(--icon-hover)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
