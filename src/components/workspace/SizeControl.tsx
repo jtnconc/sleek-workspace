@@ -90,21 +90,28 @@ export function SizeControl({
     >
       {open ? (
         <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            aria-label={`Card size: ${value}. Click to change.`}
-            disabled={locked}
-            title={locked ? "Unlock the card to change its size" : `Size: ${value} (click to cycle)`}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (locked) return;
-              const next = SIZES[(SIZES.indexOf(value) + 1) % SIZES.length]!;
-              onChange(next);
-            }}
-            className="flex size-[18px] items-center justify-center rounded-[5px] transition-colors hover:bg-[var(--icon-hover)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
-          >
-            <SizeGlyph size={value} active />
-          </button>
+          {onToggleLock ? (
+            <>
+              <span className="h-3 w-px bg-border" aria-hidden="true" />
+              <button
+                type="button"
+                aria-label={locked ? "Unlock card size" : "Lock card size"}
+                aria-pressed={locked}
+                title={locked ? "Unlock card size" : "Lock card size"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleLock();
+                  setOpen(false);
+                }}
+                className={cn(
+                  "flex size-[18px] items-center justify-center rounded-[5px] transition-colors hover:bg-[var(--icon-hover)]",
+                  locked ? "text-foreground" : "text-muted-foreground/60",
+                )}
+              >
+                {locked ? <LockKey className="size-[11px]" /> : <LockKeyOpen className="size-[11px]" />}
+              </button>
+            </>
+          ) : null}
           {onCustomize ? (
             <>
               <span className="h-3 w-px bg-border" aria-hidden="true" />
@@ -123,7 +130,7 @@ export function SizeControl({
                   customizing ? "text-foreground" : "text-muted-foreground/60",
                 )}
               >
-                <Paintbrush className="size-[11px]" />
+                <PaintBrushBroad className="size-[11px]" />
               </button>
             </>
           ) : null}
@@ -149,28 +156,21 @@ export function SizeControl({
               </button>
             </>
           ) : null}
-          {onToggleLock ? (
-            <>
-              <span className="h-3 w-px bg-border" aria-hidden="true" />
-              <button
-                type="button"
-                aria-label={locked ? "Unlock card size" : "Lock card size"}
-                aria-pressed={locked}
-                title={locked ? "Unlock card size" : "Lock card size"}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleLock();
-                  setOpen(false);
-                }}
-                className={cn(
-                  "flex size-[18px] items-center justify-center rounded-[5px] transition-colors hover:bg-[var(--icon-hover)]",
-                  locked ? "text-foreground" : "text-muted-foreground/60",
-                )}
-              >
-                {locked ? <Lock className="size-[11px]" /> : <Unlock className="size-[11px]" />}
-              </button>
-            </>
-          ) : null}
+          <button
+            type="button"
+            aria-label={`Card size: ${value}. Click to change.`}
+            disabled={locked}
+            title={locked ? "Unlock the card to change its size" : `Size: ${value} (click to cycle)`}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (locked) return;
+              const next = SIZES[(SIZES.indexOf(value) + 1) % SIZES.length]!;
+              onChange(next);
+            }}
+            className="flex size-[18px] items-center justify-center rounded-[5px] transition-colors hover:bg-[var(--icon-hover)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+          >
+            <SizeGlyph size={value} active />
+          </button>
           {onReturn ? (
             <>
               <span className="h-3 w-px bg-border" aria-hidden="true" />
