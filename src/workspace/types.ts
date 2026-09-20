@@ -148,6 +148,8 @@ export interface Widget {
   sizeLocked?: boolean;
   /** legacy field kept for persisted state written before the size lock existed */
   heightLocked?: boolean;
+  /** when true, Contacts/Notes lists render in two columns (requires width >= 2) */
+  twoColumn?: boolean;
   content: WidgetContent;
 }
 

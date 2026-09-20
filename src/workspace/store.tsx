@@ -243,6 +243,7 @@ interface WorkspaceApi extends WorkspaceState {
   convertNoteToSticky: (widgetId: string, itemId: string) => void;
   returnStickyToNotes: (stickyId: string) => void;
   setWidgetTint: (id: string, tint: WidgetAccent | undefined) => void;
+  setWidgetTwoColumns: (id: string, value: boolean) => void;
   clearPulse: (id: string) => void;
   clearSearchPulse: () => void;
   setSearchQuery: (q: string) => void;
@@ -787,6 +788,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         }),
       setWidgetTint: (id, tint) =>
         patchWidgets((ws) => ws.map((x) => (x.id === id ? { ...x, tint } : x))),
+      setWidgetTwoColumns: (id, value) =>
+        patchWidgets((ws) => ws.map((x) => (x.id === id ? { ...x, twoColumn: value } : x))),
       clearPulse: (id) =>
         setState((s) => {
           if (!(id in s.pulses)) return s;
