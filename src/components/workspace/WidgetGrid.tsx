@@ -88,6 +88,7 @@ export function WidgetGrid() {
     setWidgetAccent,
     setWidgetIcon,
     setWidgetTint,
+    setWidgetTwoColumns,
     renameWidget,
     returnStickyToNotes,
     reorderWidgets,
@@ -586,6 +587,12 @@ export function WidgetGrid() {
                   }
                   onCustomize={() => setCustomizing((v) => (v === w.id ? null : w.id))}
                   customizing={isCustomizing}
+                  onToggleColumns={
+                    w.content.kind === "contacts" || w.content.kind === "notes"
+                      ? () => setWidgetTwoColumns(w.id, !w.twoColumn)
+                      : undefined
+                  }
+                  columnsOn={w.twoColumn}
                   accent={accent}
                 />
               </div>

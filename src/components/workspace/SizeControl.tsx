@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Lock, Paintbrush, Unlock } from "lucide-react";
-import { ArrowSquareIn } from "@phosphor-icons/react";
+import { ArrowSquareIn, TextColumns } from "@phosphor-icons/react";
 import type { WidgetSize } from "@/workspace/types";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +33,8 @@ export function SizeControl({
   returnLabel = "Return note to Notes list",
   onCustomize,
   customizing = false,
+  onToggleColumns,
+  columnsOn,
   accent,
 }: {
   value: WidgetSize;
@@ -51,6 +53,12 @@ export function SizeControl({
 
   /** whether the customizer is currently open, for the active-state highlight */
   customizing?: boolean;
+
+  /** toggles the two-column list layout for this widget */
+  onToggleColumns?: (() => void) | undefined;
+
+  /** whether the two-column layout is currently on, for the active-state highlight */
+  columnsOn?: boolean | undefined;
 
   /** optional accent color used for the collapsed dot */
   accent?: string;
@@ -119,6 +127,28 @@ export function SizeControl({
                 )}
               >
                 <Paintbrush className="size-[11px]" />
+              </button>
+            </>
+          ) : null}
+          {onToggleColumns ? (
+            <>
+              <span className="h-3 w-px bg-border" aria-hidden="true" />
+              <button
+                type="button"
+                aria-label="Toggle two-column layout"
+                aria-pressed={!!columnsOn}
+                title="Toggle two-column layout"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleColumns();
+                  setOpen(false);
+                }}
+                className={cn(
+                  "flex size-[18px] items-center justify-center rounded-[5px] transition-colors hover:bg-[var(--icon-hover)]",
+                  columnsOn ? "text-foreground" : "text-muted-foreground/60",
+                )}
+              >
+                <TextColumns className="size-[11px]" />
               </button>
             </>
           ) : null}
