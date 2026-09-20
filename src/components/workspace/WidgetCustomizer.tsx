@@ -1,5 +1,6 @@
 import type { WidgetAccent, WidgetIconName } from "@/workspace/types";
 import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ACCENTS, accentVar, tintVar } from "./AccentControl";
 import { WIDGET_ICONS, WIDGET_ICON_NAMES } from "./widget-icons";
 
@@ -98,6 +99,19 @@ export function WidgetCustomizer({
           />
         ))}
       </div>
+      {showColumnsToggle && (
+        <label
+          className="flex items-center justify-between gap-2 rounded-lg px-1 py-0.5 text-[12px] text-foreground"
+          onClick={stop}
+          onPointerDown={stop}
+        >
+          Dos columnas
+          <Checkbox
+            checked={!!twoColumn}
+            onCheckedChange={(v) => onToggleTwoColumn(v === true)}
+          />
+        </label>
+      )}
     </div>
   );
 }
