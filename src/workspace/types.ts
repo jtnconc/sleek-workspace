@@ -143,8 +143,6 @@ export interface Widget {
   icon?: WidgetIconName;
   /** ultra-light pastel background tint (sticky notes only) */
   tint?: WidgetAccent | undefined;
-  /** cuando es true, y el ancho del widget es >= 2, los items se muestran en 2 columnas */
-  twoColumn?: boolean;
   /** when true, both the card's width and height are pinned: presets and the
    * drag-resize handle are disabled and overflow scrolls internally */
   sizeLocked?: boolean;

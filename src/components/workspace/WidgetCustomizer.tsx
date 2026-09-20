@@ -1,6 +1,5 @@
 import type { WidgetAccent, WidgetIconName } from "@/workspace/types";
 import { cn } from "@/lib/utils";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ACCENTS, accentVar, tintVar } from "./AccentControl";
 import { WIDGET_ICONS, WIDGET_ICON_NAMES } from "./widget-icons";
 
@@ -18,9 +17,6 @@ export function WidgetCustomizer({
   onIcon,
   onTint,
   iconEditable = true,
-  twoColumn,
-  onToggleTwoColumn,
-  showColumnsToggle = false,
 }: {
   icon?: WidgetIconName | undefined;
   tint?: WidgetAccent | undefined;
@@ -30,9 +26,6 @@ export function WidgetCustomizer({
    * for base widgets (Reminders/Contacts/Tasks/Notes) so their identifying
    * icon can't be swapped away. */
   iconEditable?: boolean;
-  twoColumn?: boolean | undefined;
-  onToggleTwoColumn: (v: boolean) => void;
-  showColumnsToggle?: boolean;
 }) {
   return (
     <div
@@ -105,19 +98,6 @@ export function WidgetCustomizer({
           />
         ))}
       </div>
-      {showColumnsToggle && (
-        <label
-          className="flex items-center justify-between gap-2 rounded-lg px-1 py-0.5 text-[12px] text-foreground"
-          onClick={stop}
-          onPointerDown={stop}
-        >
-          Dos columnas
-          <Checkbox
-            checked={!!twoColumn}
-            onCheckedChange={(v) => onToggleTwoColumn(v === true)}
-          />
-        </label>
-      )}
     </div>
   );
 }

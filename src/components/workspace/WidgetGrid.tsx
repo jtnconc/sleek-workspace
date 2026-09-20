@@ -88,7 +88,6 @@ export function WidgetGrid() {
     setWidgetAccent,
     setWidgetIcon,
     setWidgetTint,
-    setWidgetTwoColumn,
     renameWidget,
     returnStickyToNotes,
     reorderWidgets,
@@ -597,9 +596,6 @@ export function WidgetGrid() {
                 onIcon={(icon) => setWidgetIcon(w.id, icon)}
                 onTint={(t) => setWidgetTint(w.id, t)}
                 iconEditable={isSticky}
-                twoColumn={w.twoColumn}
-                onToggleTwoColumn={(v) => setWidgetTwoColumn(w.id, v)}
-                showColumnsToggle={w.content.kind === "contacts" || w.content.kind === "notes"}
               />
             )}
             {!isLocked ? (
