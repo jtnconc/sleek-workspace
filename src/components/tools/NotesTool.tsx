@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Save } from "lucide-react";
+import { FloppyDisk } from "@phosphor-icons/react";
 import { useWorkspace } from "@/workspace/store";
 import { extractContact, extractReminder, extractTask } from "@/lib/note-parser";
 import { parseNightsFromText, parseRateFromText } from "@/lib/notes-calculator";
@@ -312,7 +312,7 @@ export function NotesTool() {
               aria-label="Save note"
               className="flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
-              <Save className="size-[14px]" />
+              <FloppyDisk className="size-[14px]" />
             </button>
           )}
         </div>
