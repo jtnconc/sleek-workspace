@@ -214,6 +214,7 @@ export function QuoteTool({
   const {
     quote,
     updateQuote,
+    archiveQuote,
     resetQuote,
     logQuoteField,
     quoteHistory,
@@ -587,6 +588,7 @@ const toggleItem = (itemId: string) => {
                     <button
                       type="button"
                       onClick={() => {
+                        archiveQuote();
                         resetQuote();
                         setConfirmingReset(false);
                       }}
