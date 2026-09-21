@@ -45,7 +45,7 @@ function queryToISODay(query: string): string {
  * Sidebar panel showing the full notes history — notes saved from the Notes
  * widget — with a single smart search bar.
  */
-export function CallHistoryPanel({ notes = [] }: NotesHistoryPanelProps) {
+export function CallHistoryPanel({ notes = [], onClose }: NotesHistoryPanelProps) {
   const [query, setQuery] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
 
