@@ -16,6 +16,7 @@ interface HistoryEntry {
 
 interface NotesHistoryPanelProps {
   notes?: NoteRefItem[];
+  onClose: () => void;
 }
 
 const stripHtml = (html: string) =>
@@ -44,7 +45,7 @@ function queryToISODay(query: string): string {
  * Sidebar panel showing the full notes history — notes saved from the Notes
  * widget — with a single smart search bar.
  */
-export function CallHistoryPanel({ notes = [] }: NotesHistoryPanelProps) {
+export function CallHistoryPanel({ notes = [], onClose }: NotesHistoryPanelProps) {
   const [query, setQuery] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -87,7 +88,18 @@ export function CallHistoryPanel({ notes = [] }: NotesHistoryPanelProps) {
 
   return (
     <aside className="flex w-72 shrink-0 flex-col overflow-hidden border-l border-border pl-4">
-      <p className="label-xs mb-2">Notes History</p>
+      <div className="mb-2 flex items-center justify-between">
+        <p className="label-xs">Notes History</p>
+        <button
+          type="button"
+          aria-label="Close history"
+          title="Close history"
+          onClick={onClose}
+          className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+        >
+          <X className="size-3.5" />
+        </button>
+      </div>
 
       <div className="mb-3 flex shrink-0 flex-col gap-2">
         <div className="flex items-center gap-1.5 rounded-full border border-border bg-surface-2 px-2.5 py-1.5">

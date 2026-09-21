@@ -299,7 +299,12 @@ export function NotesTool() {
           <NotesTableOverlay containerRef={paperRef} editorRef={editorRef} />
         </div>
 
-        {notesHistoryOpen && <CallHistoryPanel notes={savedNotes} />}
+        {notesHistoryOpen && (
+          <CallHistoryPanel
+            notes={savedNotes}
+            onClose={() => setNotesHistoryOpen(false)}
+          />
+        )}
       </div>
 
       <footer className="mt-auto flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-border py-2">
