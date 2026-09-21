@@ -29,7 +29,7 @@ export const HOTELS: HotelTemplate[] = [
         "Persona adicional, a partir de 12 años en adelante, aplica un cargo de USD 20.00 + 10% por noche",
       ],
       hotelInfo:
-        "Punta Pacífica, Ciudad de Panamá",
+        "Calle Ricardo Arias 14, Campo Alegre Área Bancaria, Ciudad de Panamá, Panamá",
       signature: "Departamento de Reservas\nAC Hotel\nreservas@achotelpanama.com",
     },
     en: {
@@ -45,7 +45,7 @@ export const HOTELS: HotelTemplate[] = [
         "Additional guest, age 12 and older, incurs a charge of USD 20.00 + 10% per night",
       ],
       hotelInfo:
-        "Punta Pacifica, Panama City",
+        "Calle Ricardo Arias 14, Campo Alegre Área Bancaria, Panama City, Panama",
       signature: "Reservations Department\nAC Hotel\nreservations@achotelpanama.com",
     },
   },
@@ -83,7 +83,7 @@ export const HOTELS: HotelTemplate[] = [
         "Late check-out y early check-in sujetos a disponibilidad (previa confirmación)",
       ],
       hotelInfo:
-        "Calle 51 Este, Bella Vista",
+        "Calle Colombia y Calle República del Paraguay, Ciudad de Panamá, Panamá",
       signature:
         "Ventas Corporativas\nMarriott Executive Apartments Finisterre\nventas@finisterre.com",
     },
@@ -102,7 +102,7 @@ export const HOTELS: HotelTemplate[] = [
         "Late check-out and early check-in subject to availability (prior confirmation required)",
       ],
       hotelInfo:
-        "Calle 51 Este, Bella Vista",
+        "Calle Colombia y Calle República del Paraguay, Panama City, Panama",
       signature:
         "Corporate Sales\nMarriott Executive Apartments Finisterre\nsales@finisterre.com",
     },
@@ -137,7 +137,7 @@ export const HOTELS: HotelTemplate[] = [
         "Opcional: por USD 20.00 + 10% se puede hacer upgrade de habitación Studio King a Ocean View King",
       ],
       hotelInfo:
-        "Av. Balboa, Ciudad de Panamá",
+        "Calle Ramón H. Jurado y Calle Tomás Gabriel Duque, Edificio Pacific Center, Ciudad de Panamá, Panamá",
       signature: "Reservas\nResidence Inn\nreservas@residenceinnpanama.com",
     },
     en: {
@@ -157,7 +157,7 @@ export const HOTELS: HotelTemplate[] = [
         "Optional: upgrade from a Studio King room to an Ocean View King for USD 20.00 + 10%",
       ],
       hotelInfo:
-        "Av. Balboa, Panama City",
+        "Calle Ramón H. Jurado y Calle Tomás Gabriel Duque, Pacific Center Building, Panama City, Panama",
       signature: "Reservations\nResidence Inn\nreservations@residenceinnpanama.com",
     },
   },
