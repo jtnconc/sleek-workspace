@@ -555,51 +555,55 @@ const toggleItem = (itemId: string) => {
                     {STATUS_PILL_LABEL[quote.status][lang]}
                   </span>
                 )}
-                <Popover open={confirmingReset} onOpenChange={setConfirmingReset}>
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      aria-label="Nueva cotización"
-                      title="Nueva cotización"
-                      onClick={() => {
-                        if (isQuoteEmpty) {
-                          resetQuote();
-                        } else {
-                          setConfirmingReset(true);
-                        }
-                      }}
-                      className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                    >
-                      <FilePlus className="size-3.5" />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent align="end" className="w-64 rounded-2xl p-3">
-                    <p className="text-[12.5px] font-semibold">¿Nueva cotización?</p>
-                    <p className="mt-1 text-[12px] text-muted-foreground">
-                      Se limpiará la cotización actual. Queda guardada en el historial.
-                    </p>
-                    <div className="mt-3 flex items-center justify-end gap-2">
+                {isQuoteEmpty ? (
+                  <button
+                    type="button"
+                    aria-label="Nueva cotización"
+                    title="Nueva cotización"
+                    onClick={() => resetQuote()}
+                    className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  >
+                    <FilePlus className="size-3.5" />
+                  </button>
+                ) : (
+                  <Popover open={confirmingReset} onOpenChange={setConfirmingReset}>
+                    <PopoverTrigger asChild>
                       <button
                         type="button"
-                        onClick={() => setConfirmingReset(false)}
-                        className="rounded-full px-3 py-1 text-[12px] transition-colors hover:bg-secondary"
+                        aria-label="Nueva cotización"
+                        title="Nueva cotización"
+                        className="flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                       >
-                        Cancelar
+                        <FilePlus className="size-3.5" />
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          archiveQuote();
-                          resetQuote();
-                          setConfirmingReset(false);
-                        }}
-                        className="rounded-full bg-foreground px-3 py-1 text-[12px] text-background transition-opacity hover:opacity-90"
-                      >
-                        Confirmar
-                      </button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                    </PopoverTrigger>
+                    <PopoverContent align="end" className="w-60 space-y-2 rounded-xl p-3 text-[13px]">
+                      <p className="font-medium">¿Nueva cotización?</p>
+                      <p className="text-[12px] text-muted-foreground">
+                        Se perderá lo que hayas escrito en esta cotización.
+                      </p>
+                      <div className="flex justify-end gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setConfirmingReset(false)}
+                          className="rounded-full px-3 py-1 text-[12px] transition-colors hover:bg-secondary"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            resetQuote();
+                            setConfirmingReset(false);
+                          }}
+                          className="rounded-full bg-foreground px-3 py-1 text-[12px] text-background transition-opacity hover:opacity-90"
+                        >
+                          Confirmar
+                        </button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
               </div>
             </div>
           </header>
