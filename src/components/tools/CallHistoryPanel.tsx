@@ -16,6 +16,7 @@ interface HistoryEntry {
 
 interface NotesHistoryPanelProps {
   notes?: NoteRefItem[];
+  onClose: () => void;
 }
 
 const stripHtml = (html: string) =>
