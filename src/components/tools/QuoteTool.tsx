@@ -214,7 +214,6 @@ export function QuoteTool({
   const {
     quote,
     updateQuote,
-    archiveQuote,
     resetQuote,
     logQuoteField,
     quoteHistory,
