@@ -36,6 +36,7 @@ export function NotesTool() {
     addTask,
     addWidgetItem,
     notesHistoryOpen,
+    setNotesHistoryOpen,
   } = useWorkspace();
   const editorRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
