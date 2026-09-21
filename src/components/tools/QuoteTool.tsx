@@ -540,9 +540,6 @@ const toggleItem = (itemId: string) => {
                 className="h-9 w-full max-w-[9.5rem]"
               />
 
-              <p className="tabular-nums text-[11px] text-muted-foreground">
-                {L.quotationNo} {quoteNumber(quote)}
-              </p>
               <div className="flex items-center gap-1.5">
                 {quote.status && (
                   <span
@@ -1017,18 +1014,23 @@ const toggleItem = (itemId: string) => {
           </div>
 
 
-          <button
-            onClick={() => setShowDetails((v) => !v)}
-            className="mt-5 text-[11.5px] text-muted-foreground transition-colors hover:text-foreground"
-          >
-            {showDetails
-              ? lang === "es"
-                ? "Ocultar detalles"
-                : "Hide details"
-              : lang === "es"
-                ? "Editar detalles"
-                : "Edit details"}
-          </button>
+          <div className="mt-5 flex items-center justify-between">
+            <button
+              onClick={() => setShowDetails((v) => !v)}
+              className="text-[11.5px] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {showDetails
+                ? lang === "es"
+                  ? "Ocultar detalles"
+                  : "Hide details"
+                : lang === "es"
+                  ? "Editar detalles"
+                  : "Edit details"}
+            </button>
+            <p className="tabular-nums text-[11px] text-muted-foreground">
+              {L.quotationNo} {quoteNumber(quote)}
+            </p>
+          </div>
 
           {showDetails && (
             <div className="mt-3 grid gap-4 border-t border-border pt-4 sm:grid-cols-2">
