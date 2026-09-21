@@ -81,7 +81,7 @@ function matchFont(computed: string | null): string | null {
 
 export function SettingsPanel() {
   const { lock } = useAuth();
-  const { quote, notesHistoryOpen, setNotesHistoryOpen } = useWorkspace();
+  const { quote } = useWorkspace();
   const lang = quote.language;
   const [activeFont, setActiveFont] = useState(() => getNotesBaseFontFamily());
   const [fontSize, setFontSize] = useState(() => getNotesBaseFontSize());
@@ -249,27 +249,6 @@ export function SettingsPanel() {
           </div>
         </div>
 
-        <div className="space-y-1.5">
-          <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-            Notes
-          </p>
-          <button
-            type="button"
-            onClick={() => setNotesHistoryOpen(!notesHistoryOpen)}
-            className="flex w-full items-center justify-between rounded-md border border-border px-3 py-2 text-[13px] transition-colors hover:bg-secondary"
-          >
-            <span>{lang === "es" ? "Historial de notas" : "Notes history"}</span>
-            <span className="text-muted-foreground">
-              {notesHistoryOpen
-                ? lang === "es"
-                  ? "Abierto"
-                  : "Open"
-                : lang === "es"
-                  ? "Cerrado"
-                  : "Closed"}
-            </span>
-          </button>
-        </div>
 
         <button
           type="button"
