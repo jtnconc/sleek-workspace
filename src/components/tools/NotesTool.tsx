@@ -194,8 +194,20 @@ export function NotesTool() {
               const isReminder = trimmed.endsWith("*");
               const isContact = trimmed.endsWith("#");
               const isTask = trimmed.endsWith("/");
-              if (!isReminder && !isContact && !isTask) return;
+              const isHistory = trimmed.endsWith("'h");
+              if (!isReminder && !isContact && !isTask && !isHistory) return;
               e.preventDefault();
+
+              if (isHistory) {
+                setNotesHistoryOpen(true);
+                const withoutTrigger = text.slice(0, text.lastIndexOf("'h"));
+                el.innerHTML = "";
+                el.textContent = withoutTrigger;
+                resetEditorSelection(el);
+                setPlain(withoutTrigger);
+                setNoteText(withoutTrigger);
+                return;
+              }
 
               if (isReminder) {
                 const { title, date, time } = extractReminder(text);
