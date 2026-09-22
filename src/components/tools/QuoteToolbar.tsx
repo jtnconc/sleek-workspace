@@ -24,7 +24,7 @@ interface Props {
   onTogglePreview: () => void;
   history: boolean;
   onToggleHistory: () => void;
-  onClosePreview?: () => void;
+  onClosePreview?: (() => void) | undefined;
 }
 
 export function QuoteToolbar({
