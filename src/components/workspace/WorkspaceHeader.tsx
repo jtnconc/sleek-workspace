@@ -38,6 +38,7 @@ interface WorkspaceHeaderProps {
   onToggleQuotePreview: () => void;
   quoteHistoryOpen: boolean;
   onToggleQuoteHistory: () => void;
+  onClosePreview?: () => void;
 }
 
 export function WorkspaceHeader({
@@ -45,6 +46,7 @@ export function WorkspaceHeader({
   onToggleQuotePreview,
   quoteHistoryOpen,
   onToggleQuoteHistory,
+  onClosePreview,
 }: WorkspaceHeaderProps) {
   const {
     mode,
@@ -232,6 +234,7 @@ export function WorkspaceHeader({
               onTogglePreview={onToggleQuotePreview}
               history={quoteHistoryOpen}
               onToggleHistory={onToggleQuoteHistory}
+              onClosePreview={onClosePreview}
             />
           )}
         </div>

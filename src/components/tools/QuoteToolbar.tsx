@@ -24,6 +24,7 @@ interface Props {
   onTogglePreview: () => void;
   history: boolean;
   onToggleHistory: () => void;
+  onClosePreview?: () => void;
 }
 
 export function QuoteToolbar({
@@ -32,6 +33,7 @@ export function QuoteToolbar({
   onTogglePreview,
   history,
   onToggleHistory,
+  onClosePreview,
 }: Props) {
   const { quote, hotelLogos, archiveQuote, resetQuote, setShowQuoteErrors } = useWorkspace();
   const selected = quote.hotelId ? getHotel(quote.hotelId) : null;
@@ -58,7 +60,7 @@ export function QuoteToolbar({
           icon: CaretLeft,
           label: "Back to quote",
           disabled: false,
-          onClick: onTogglePreview,
+          onClick: onClosePreview ?? onTogglePreview,
           active: true,
         },
       ]

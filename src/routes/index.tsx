@@ -35,6 +35,15 @@ export const Route = createFileRoute("/")({
 function WorkspacePage() {
   const [quotePreview, setQuotePreview] = useState(false);
   const [quoteHistory, setQuoteHistory] = useState(false);
+  const [previewFromHistory, setPreviewFromHistory] = useState(false);
+
+  const onClosePreview = () => {
+    setQuotePreview(false);
+    if (previewFromHistory) {
+      setQuoteHistory(true);
+    }
+    setPreviewFromHistory(false);
+  };
 
   return (
     <AuthProvider>
@@ -46,12 +55,14 @@ function WorkspacePage() {
               onToggleQuotePreview={() => {
                 setQuotePreview((v) => !v);
                 setQuoteHistory(false);
+                setPreviewFromHistory(false);
               }}
               quoteHistoryOpen={quoteHistory}
               onToggleQuoteHistory={() => {
                 setQuoteHistory((v) => !v);
                 setQuotePreview(false);
               }}
+              onClosePreview={onClosePreview}
             />
             <main className="mx-auto flex w-full max-w-[1240px] min-h-0 flex-1 flex-col px-5 pb-3 pt-0">
               <Workspace
@@ -64,10 +75,12 @@ function WorkspacePage() {
                 onToggleQuotePreview={() => {
                   setQuotePreview((v) => !v);
                   setQuoteHistory(false);
+                  setPreviewFromHistory(false);
                 }}
                 onShowQuotePreview={() => {
                   setQuotePreview(true);
                   setQuoteHistory(false);
+                  setPreviewFromHistory(true);
                 }}
               />
             </main>
