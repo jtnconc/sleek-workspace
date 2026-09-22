@@ -32,6 +32,7 @@ export function QuotePdfViewer({ data }: QuotePdfViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [numPages, setNumPages] = useState(0);
+  const [loadError, setLoadError] = useState<string | null>(null);
   // pdf.js detaches the buffer it receives, so hand it a fresh copy per document
   // and keep the `file` object referentially stable across re-renders.
   const file = useMemo(() => ({ data: new Uint8Array(data) }), [data]);
@@ -55,11 +56,27 @@ export function QuotePdfViewer({ data }: QuotePdfViewerProps) {
     return () => observer.disconnect();
   }, []);
 
+  if (loadError) {
+    return (
+      <p className="py-8 text-center text-xs text-muted-foreground">
+        Preview unavailable: {loadError}
+      </p>
+    );
+  }
+
   return (
     <div ref={containerRef} className="flex w-full flex-col items-center">
       <Document
         file={file}
         onLoadSuccess={({ numPages: n }) => setNumPages(n)}
+        onLoadError={(err) => {
+          console.error("QuotePdfViewer load error:", err);
+          setLoadError(err.message || "Failed to load PDF");
+        }}
+        onSourceError={(err) => {
+          console.error("QuotePdfViewer source error:", err);
+          setLoadError(err.message || "Failed to load PDF source");
+        }}
         loading={
           width > 0 ? (
             <PageSkeleton width={width} />
@@ -73,7 +90,7 @@ export function QuotePdfViewer({ data }: QuotePdfViewerProps) {
         }
         error={
           <p className="py-8 text-center text-xs text-muted-foreground">
-            Preview unavailable
+            {loadError ? `Preview unavailable: ${loadError}` : "Preview unavailable"}
           </p>
         }
         className="flex flex-col items-center gap-3"
