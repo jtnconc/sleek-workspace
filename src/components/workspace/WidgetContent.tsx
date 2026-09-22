@@ -831,7 +831,11 @@ function ContactsContent({
       if (selectedFilters.includes("favorite")) return !!p.favorite;
       return selectedFilters.includes(contactFilterValue(p));
     })
-    .sort((a, b) => Number(!!b.favorite) - Number(!!a.favorite));
+    .sort((a, b) => {
+      const favDiff = Number(!!b.favorite) - Number(!!a.favorite);
+      if (favDiff !== 0) return favDiff;
+      return a.name.localeCompare(b.name, "es", { sensitivity: "base" });
+    });
 
   return (
     <>
