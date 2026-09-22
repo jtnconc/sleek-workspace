@@ -28,7 +28,7 @@ import {
   quoteTotals,
 } from "@/lib/quote-model";
 
-import { generateQuotePdf, quotePdfPreviewData } from "@/lib/quote-pdf";
+import { generateQuotePdf, quotePdfPreviewUrl } from "@/lib/quote-pdf";
 
 const QuotePdfViewer = lazy(() =>
   import("@/components/tools/QuotePdfViewer").then((m) => ({ default: m.QuotePdfViewer })),
@@ -315,15 +315,19 @@ const toggleItem = (itemId: string) => {
   const logo = hotelLogos[quote.hotelId] ?? hotel.logoUrl;
   const description = selectedHotel ? quoteDescription(quote, selectedHotel) : quote.description;
 
-  /** Raw bytes of the real generated PDF, rendered inline by pdf.js. */
-  const [pdfData, setPdfData] = useState<Uint8Array | null>(null);
+  /** Blob URL of the real generated PDF, rendered by the browser's native viewer. */
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!showPreview || !selectedHotel) {
-      setPdfData(null);
+      setPdfBlobUrl(null);
       return;
     }
-    setPdfData(quotePdfPreviewData(quote, selectedHotel, logo));
+    const url = quotePdfPreviewUrl(quote, selectedHotel, logo);
+    setPdfBlobUrl(url);
+    return () => {
+      URL.revokeObjectURL(url);
+    };
     // Se genera SOLO al abrir la vista previa, no en cada cambio de "quote"
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showPreview]);
@@ -1129,7 +1133,7 @@ const toggleItem = (itemId: string) => {
         </div>
 
         <AnimatePresence initial={false} mode="popLayout">
-          {showPreview && pdfData && (
+          {showPreview && pdfBlobUrl && (
             <motion.div
               key="quote-preview"
               layout
@@ -1141,7 +1145,7 @@ const toggleItem = (itemId: string) => {
             >
               <ClientOnly fallback={<PdfSkeleton />}>
                 <Suspense fallback={<PdfSkeleton />}>
-                  <QuotePdfViewer data={pdfData} />
+                  <QuotePdfViewer url={pdfBlobUrl} />
                 </Suspense>
               </ClientOnly>
             </motion.div>

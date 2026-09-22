@@ -318,10 +318,10 @@ export function generateQuotePdf(quote: QuoteDoc, hotel: HotelTemplate, logoImag
 }
 
 /**
- * Raw bytes for an in-place preview of the exact same document. Bytes instead of
- * a blob: URL — a revoked URL (StrictMode double-effect, re-render) makes pdf.js
- * fail with "Unexpected server response (0)".
+ * Blob URL for an in-place preview of the exact same document, rendered by the
+ * browser's native PDF viewer inside an <iframe>. The caller must revoke the
+ * URL when it's no longer needed.
  */
-export function quotePdfPreviewData(quote: QuoteDoc, hotel: HotelTemplate, logoImage?: string) {
-  return new Uint8Array(buildQuotePdf(quote, hotel, logoImage).output("arraybuffer"));
+export function quotePdfPreviewUrl(quote: QuoteDoc, hotel: HotelTemplate, logoImage?: string) {
+  return buildQuotePdf(quote, hotel, logoImage).output("bloburl").toString();
 }
