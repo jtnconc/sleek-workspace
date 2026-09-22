@@ -316,10 +316,17 @@ const toggleItem = (itemId: string) => {
   const description = selectedHotel ? quoteDescription(quote, selectedHotel) : quote.description;
 
   /** Raw bytes of the real generated PDF, rendered inline by pdf.js. */
-  const pdfData = useMemo(
-    () => (showPreview && selectedHotel ? quotePdfPreviewData(quote, selectedHotel, logo) : null),
-    [showPreview, selectedHotel, quote, logo],
-  );
+  const [pdfData, setPdfData] = useState<Uint8Array | null>(null);
+
+  useEffect(() => {
+    if (!showPreview || !selectedHotel) {
+      setPdfData(null);
+      return;
+    }
+    setPdfData(quotePdfPreviewData(quote, selectedHotel, logo));
+    // Se genera SOLO al abrir la vista previa, no en cada cambio de "quote"
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showPreview]);
 
 
   const saveRoomTypes = (types: string[]) => {
