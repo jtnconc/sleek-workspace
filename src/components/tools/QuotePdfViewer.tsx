@@ -32,6 +32,7 @@ export function QuotePdfViewer({ data }: QuotePdfViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [numPages, setNumPages] = useState(0);
+  const [loadError, setLoadError] = useState<string | null>(null);
   // pdf.js detaches the buffer it receives, so hand it a fresh copy per document
   // and keep the `file` object referentially stable across re-renders.
   const file = useMemo(() => ({ data: new Uint8Array(data) }), [data]);
