@@ -100,7 +100,7 @@ export function QuotePdfViewer({ data }: QuotePdfViewerProps) {
             <Page
               key={i}
               pageNumber={i + 1}
-              width={width}
+              width={Math.min(width, 900)}
               renderTextLayer={false}
               renderAnnotationLayer={false}
               loading={<PageSkeleton width={width} />}
