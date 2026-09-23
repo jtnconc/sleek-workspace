@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, memo, useContext, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Alarm,
@@ -802,6 +802,176 @@ function RemindersContent({
   );
 }
 
+const CONTACT_FIELD =
+  "w-full rounded-lg bg-surface px-2 py-1 text-[12px] outline-none focus:ring-1 focus:ring-ring";
+
+const ContactRow = memo(function ContactRow({
+  p,
+  widget,
+  isEditing,
+  isConfirming,
+  tapped,
+  searchQuery,
+  onTap,
+  onStartEdit,
+  onFinishEdit,
+  onStartConfirm,
+  onCancelConfirm,
+  onConfirmDelete,
+  onUpdate,
+}: {
+  p: ContactItem;
+  widget: Widget;
+  isEditing: boolean;
+  isConfirming: boolean;
+  tapped: boolean;
+  searchQuery: string;
+  onTap: () => void;
+  onStartEdit: () => void;
+  onFinishEdit: () => void;
+  onStartConfirm: () => void;
+  onCancelConfirm: () => void;
+  onConfirmDelete: () => void;
+  onUpdate: (patch: Partial<ContactItem>) => void;
+}) {
+  const category = contactFilterValue(p);
+  const CategoryIcon = category === "hotel" ? Building : category === "agent" ? Users : User;
+  const categoryAccent = category === "hotel" ? "blue" : category === "agent" ? "purple" : "neutral";
+  return (
+    <li
+      className="group relative min-w-0 rounded-xl bg-surface-2 px-3 py-2"
+      style={
+        widget.tint
+          ? { backgroundColor: `color-mix(in oklab, ${tintVar(widget.tint)} 60%, white 40%)` }
+          : undefined
+      }
+      onClick={onTap}
+    >
+      <div className="flex min-w-0 items-start gap-2">
+        <div className="min-w-0 flex-1">
+          {isEditing ? (
+            <div className="space-y-1" onClick={stop} onPointerDown={stop}>
+              {(
+                [
+                  ["name", "Name"],
+                  ["phone", "Phone"],
+                ] as const
+              ).map(([key, label]) => (
+                <input
+                  key={key}
+                  value={p[key] ?? ""}
+                  placeholder={label}
+                  aria-label={label}
+                  onChange={(e) => onUpdate({ [key]: e.target.value })}
+                  className={CONTACT_FIELD}
+                />
+              ))}
+              <Select
+                value={category}
+                onValueChange={(v) => onUpdate({ category: v as ContactCategory })}
+              >
+                <SelectTrigger
+                  aria-label="Category"
+                  className="h-auto w-full rounded-lg border-border bg-surface px-2 py-1 text-[12px] shadow-none focus:ring-0 focus-visible:border-ring"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value="hotel" className="text-[12px]">
+                    Hotel
+                  </SelectItem>
+                  <SelectItem value="agent" className="text-[12px]">
+                    Agent
+                  </SelectItem>
+                  <SelectItem value="client" className="text-[12px]">
+                    Client
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFinishEdit();
+                }}
+                className="label-xs hover:text-foreground"
+              >
+                Done
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-1.5 pr-6">
+                <CategoryIcon
+                  className="size-3 shrink-0"
+                  style={{ color: accentVar(categoryAccent) }}
+                  aria-label={category}
+                />
+                <p className="min-w-0 flex-1 truncate text-[13px] font-medium">
+                  {highlightText(p.name, searchQuery)}
+                </p>
+              </div>
+              {p.phone && (
+                <p className="flex items-center gap-1.5 truncate font-mono text-[12px] text-entity-phone">
+                  <span className="inline-flex w-3 shrink-0 items-center justify-center">
+                    {p.favorite && (
+                      <Star
+                        className="size-3"
+                        weight="fill"
+                        style={{ color: accentVar("yellow") }}
+                        aria-label="Favorite"
+                      />
+                    )}
+                  </span>
+                  {highlightText(p.phone, searchQuery)}
+                </p>
+              )}
+            </>
+          )}
+        </div>
+
+        <ItemActions revealed={tapped || isEditing || isConfirming}>
+          {isConfirming ? (
+            <DeleteAction
+              label="Delete contact"
+              confirming
+              onRequest={onStartConfirm}
+              onCancel={onCancelConfirm}
+              onConfirm={() => {
+                onCancelConfirm();
+                onConfirmDelete();
+              }}
+            />
+          ) : (
+            <>
+              <MiniAction
+                label={p.favorite ? "Unfavorite contact" : "Favorite contact"}
+                onClick={() => onUpdate({ favorite: !p.favorite })}
+              >
+                <Star
+                  className="size-3"
+                  weight={p.favorite ? "fill" : "regular"}
+                  style={p.favorite ? { color: accentVar("yellow") } : undefined}
+                />
+              </MiniAction>
+              <MiniAction label="Edit contact" onClick={onStartEdit}>
+                <PencilSimple className="size-3" />
+              </MiniAction>
+              <DeleteAction
+                label="Delete contact"
+                confirming={false}
+                onRequest={onStartConfirm}
+                onCancel={onCancelConfirm}
+                onConfirm={onConfirmDelete}
+              />
+            </>
+          )}
+        </ItemActions>
+      </div>
+    </li>
+  );
+});
+
 function ContactsContent({
   widget,
   filtersOpen,
@@ -819,8 +989,7 @@ function ContactsContent({
   const [tapped, setTapped] = useState<string | null>(null);
   if (widget.content.kind !== "contacts") return null;
 
-  const field =
-    "w-full rounded-lg bg-surface px-2 py-1 text-[12px] outline-none focus:ring-1 focus:ring-ring";
+
 
   const visible = widget.content.items
     .filter((p) =>
@@ -851,151 +1020,24 @@ function ContactsContent({
           text={searchQuery.trim() ? "No contacts match your search." : "No contacts added yet. End a note with # to add one."}
         />
       )}
-      {visible.map((p) => {
-        const isEditing = editing === p.id;
-        const isConfirming = confirming === p.id;
-        const category = contactFilterValue(p);
-        const CategoryIcon =
-          category === "hotel" ? Building : category === "agent" ? Users : User;
-        const categoryAccent =
-          category === "hotel" ? "blue" : category === "agent" ? "purple" : "neutral";
-        return (
-          <li
-            key={p.id}
-            className="group relative min-w-0 rounded-xl bg-surface-2 px-3 py-2"
-            style={
-              widget.tint
-                ? { backgroundColor: `color-mix(in oklab, ${tintVar(widget.tint)} 60%, white 40%)` }
-                : undefined
-            }
-            onClick={() => setTapped((v) => (v === p.id ? null : p.id))}
-          >
-            <div className="flex min-w-0 items-start gap-2">
-              <div className="min-w-0 flex-1">
-                {isEditing ? (
-                  <div className="space-y-1" onClick={stop} onPointerDown={stop}>
-                    {(
-                      [
-                        ["name", "Name"],
-                        ["phone", "Phone"],
-                      ] as const
-                    ).map(([key, label]) => (
-                      <input
-                        key={key}
-                        value={p[key] ?? ""}
-                        placeholder={label}
-                        aria-label={label}
-                        onChange={(e) => updateContact(widget.id, p.id, { [key]: e.target.value })}
-                        className={field}
-                      />
-                    ))}
-                    <Select
-                      value={category}
-                      onValueChange={(v) =>
-                        updateContact(widget.id, p.id, { category: v as ContactCategory })
-                      }
-                    >
-                      <SelectTrigger
-                        aria-label="Category"
-                        className="h-auto w-full rounded-lg border-border bg-surface px-2 py-1 text-[12px] shadow-none focus:ring-0 focus-visible:border-ring"
-                      >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl">
-                        <SelectItem value="hotel" className="text-[12px]">
-                          Hotel
-                        </SelectItem>
-                        <SelectItem value="agent" className="text-[12px]">
-                          Agent
-                        </SelectItem>
-                        <SelectItem value="client" className="text-[12px]">
-                          Client
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditing(null);
-                      }}
-                      className="label-xs hover:text-foreground"
-                    >
-                      Done
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex items-center gap-1.5 pr-6">
-                      <CategoryIcon
-                        className="size-3 shrink-0"
-                        style={{ color: accentVar(categoryAccent) }}
-                        aria-label={category}
-                      />
-                      <p className="min-w-0 flex-1 truncate text-[13px] font-medium">
-                        {highlightText(p.name, searchQuery)}
-                      </p>
-                    </div>
-                    {p.phone && (
-                      <p className="flex items-center gap-1.5 truncate font-mono text-[12px] text-entity-phone">
-                        <span className="inline-flex w-3 shrink-0 items-center justify-center">
-                          {p.favorite && (
-                            <Star
-                              className="size-3"
-                              weight="fill"
-                              style={{ color: accentVar("yellow") }}
-                              aria-label="Favorite"
-                            />
-                          )}
-                        </span>
-                        {highlightText(p.phone, searchQuery)}
-                      </p>
-                    )}
-                  </>
-                )}
-              </div>
-
-              <ItemActions revealed={tapped === p.id || isEditing || isConfirming}>
-                {isConfirming ? (
-                  <DeleteAction
-                    label="Delete contact"
-                    confirming
-                    onRequest={() => setConfirming(p.id)}
-                    onCancel={() => setConfirming(null)}
-                    onConfirm={() => {
-                      setConfirming(null);
-                      deleteContact(widget.id, p.id);
-                    }}
-                  />
-                ) : (
-                  <>
-                    <MiniAction
-                      label={p.favorite ? "Unfavorite contact" : "Favorite contact"}
-                      onClick={() => updateContact(widget.id, p.id, { favorite: !p.favorite })}
-                    >
-                      <Star
-                        className="size-3"
-                        weight={p.favorite ? "fill" : "regular"}
-                        style={p.favorite ? { color: accentVar("yellow") } : undefined}
-                      />
-                    </MiniAction>
-                    <MiniAction label="Edit contact" onClick={() => setEditing(p.id)}>
-                      <PencilSimple className="size-3" />
-                    </MiniAction>
-                    <DeleteAction
-                      label="Delete contact"
-                      confirming={false}
-                      onRequest={() => setConfirming(p.id)}
-                      onCancel={() => setConfirming(null)}
-                      onConfirm={() => deleteContact(widget.id, p.id)}
-                    />
-                  </>
-                )}
-              </ItemActions>
-            </div>
-          </li>
-        );
-      })}
+      {visible.map((p) => (
+        <ContactRow
+          key={p.id}
+          p={p}
+          widget={widget}
+          isEditing={editing === p.id}
+          isConfirming={confirming === p.id}
+          tapped={tapped === p.id}
+          searchQuery={searchQuery}
+          onTap={() => setTapped((v) => (v === p.id ? null : p.id))}
+          onStartEdit={() => setEditing(p.id)}
+          onFinishEdit={() => setEditing(null)}
+          onStartConfirm={() => setConfirming(p.id)}
+          onCancelConfirm={() => setConfirming(null)}
+          onConfirmDelete={() => deleteContact(widget.id, p.id)}
+          onUpdate={(patch) => updateContact(widget.id, p.id, patch)}
+        />
+      ))}
       </ul>
     </>
   );
