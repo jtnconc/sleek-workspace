@@ -325,19 +325,29 @@ const toggleItem = (itemId: string) => {
   /** Blob URL of the real generated PDF, rendered by the browser's native viewer. */
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
 
+  // Source quote/hotel/logo for the preview: a history quote when previewing
+  // from history (Eye), otherwise the quote currently in the editor.
+  const previewSourceQuote = previewQuote ?? quote;
+  const previewSourceHotel = previewQuote
+    ? getHotel(previewQuote.hotelId)
+    : selectedHotel;
+  const previewSourceLogo = previewQuote
+    ? (hotelLogos[previewQuote.hotelId] ?? getHotel(previewQuote.hotelId).logoUrl)
+    : logo;
+
   useEffect(() => {
-    if (!showPreview || !selectedHotel) {
+    if (!showPreview || !previewSourceHotel) {
       setPdfBlobUrl(null);
       return;
     }
-    const url = quotePdfPreviewUrl(quote, selectedHotel, logo);
+    const url = quotePdfPreviewUrl(previewSourceQuote, previewSourceHotel, previewSourceLogo);
     setPdfBlobUrl(url);
     return () => {
       URL.revokeObjectURL(url);
     };
     // Se genera SOLO al abrir la vista previa, no en cada cambio de "quote"
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showPreview]);
+  }, [showPreview, previewQuote]);
 
 
   const saveRoomTypes = (types: string[]) => {
@@ -1269,7 +1279,7 @@ const toggleItem = (itemId: string) => {
                   </button>
                   <button
                     onClick={() => {
-                      loadQuote(q.id);
+                      setPreviewQuote(q);
                       onShowPreview?.();
                     }}
                     aria-label={lang === "es" ? "Vista previa de cotización" : "Preview quote"}
