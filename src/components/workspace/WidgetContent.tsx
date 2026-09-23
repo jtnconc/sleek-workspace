@@ -989,8 +989,7 @@ function ContactsContent({
   const [tapped, setTapped] = useState<string | null>(null);
   if (widget.content.kind !== "contacts") return null;
 
-  const field =
-    "w-full rounded-lg bg-surface px-2 py-1 text-[12px] outline-none focus:ring-1 focus:ring-ring";
+
 
   const visible = widget.content.items
     .filter((p) =>
