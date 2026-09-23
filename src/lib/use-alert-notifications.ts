@@ -1,20 +1,23 @@
 import { useEffect, useRef } from "react";
 import type { Widget } from "@/workspace/types";
-import { reminderAlertPhase } from "@/lib/reminder-alert";
+import { DEFAULT_NOTIFY_MINUTES, reminderAlertPhase } from "@/lib/reminder-alert";
 import { taskAlertPhase } from "@/lib/task-schedule";
 import { reminderState, taskState } from "@/components/workspace/WidgetContent";
 
 /**
  * Requests notification permission once, on first load. While the app
  * stays open, keeps the OS taskbar/dock badge in sync with how many
- * reminders/tasks are currently "due", and fires one native notification
- * per item the moment it becomes due (won't repeat until it's rescheduled
- * or reopened). There's no service worker or push backend, so nothing
- * fires while the app is fully closed — only while it's open, including
+ * reminders/tasks are currently "due", and fires up to two native
+ * notifications per item: one when it enters its configured lead-time
+ * window ("pre", e.g. 15 minutes before) and one the moment it becomes
+ * due. Neither repeats until the item is rescheduled or leaves the
+ * window. There's no service worker or push backend, so nothing fires
+ * while the app is fully closed — only while it's open, including
  * minimized/backgrounded.
  */
 export function useAlertNotifications(widgets: Widget[]) {
-  const notified = useRef<Set<string>>(new Set());
+  const notifiedPre = useRef<Set<string>>(new Set());
+  const notifiedDue = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (typeof window === "undefined" || !("Notification" in window)) return;
@@ -24,38 +27,62 @@ export function useAlertNotifications(widgets: Widget[]) {
   }, []);
 
   useEffect(() => {
+    const notify = (id: string, title: string, body: string) => {
+      if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
+      new Notification(title, { body, tag: id });
+    };
+
     const tick = () => {
       const now = new Date();
       let dueCount = 0;
+
+      const handle = (
+        id: string,
+        title: string,
+        phase: "none" | "pre" | "due",
+        minutesBefore: number,
+      ) => {
+        if (phase === "none") {
+          notifiedPre.current.delete(id);
+          notifiedDue.current.delete(id);
+          return;
+        }
+        if (phase === "due") {
+          dueCount += 1;
+          if (!notifiedDue.current.has(id)) {
+            notifiedDue.current.add(id);
+            notify(id, title, "It's time.");
+          }
+          return;
+        }
+        // phase === "pre"
+        if (!notifiedPre.current.has(id)) {
+          notifiedPre.current.add(id);
+          const label = minutesBefore === 0 ? "Coming up" : `In ${minutesBefore} minutes`;
+          notify(id, title, label);
+        }
+      };
 
       for (const w of widgets) {
         if (w.content.kind === "reminders") {
           for (const r of w.content.items) {
             if (reminderState(r) === "completed" || reminderState(r) === "archived") continue;
-            const phase = reminderAlertPhase(r, now);
-            if (phase !== "due") {
-              notified.current.delete(r.id);
-              continue;
-            }
-            dueCount += 1;
-            if (!notified.current.has(r.id) && typeof Notification !== "undefined" && Notification.permission === "granted") {
-              notified.current.add(r.id);
-              new Notification(r.title || "Reminder", { body: "It's time.", tag: r.id });
-            }
+            handle(
+              r.id,
+              r.title || "Reminder",
+              reminderAlertPhase(r, now),
+              r.notifyMinutesBefore ?? DEFAULT_NOTIFY_MINUTES,
+            );
           }
         } else if (w.content.kind === "tasks") {
           for (const t of w.content.items) {
             if (taskState(t.status) === "completed") continue;
-            const phase = taskAlertPhase(t, now);
-            if (phase !== "due") {
-              notified.current.delete(t.id);
-              continue;
-            }
-            dueCount += 1;
-            if (!notified.current.has(t.id) && typeof Notification !== "undefined" && Notification.permission === "granted") {
-              notified.current.add(t.id);
-              new Notification(t.title || "Task", { body: "It's due now.", tag: t.id });
-            }
+            handle(
+              t.id,
+              t.title || "Task",
+              taskAlertPhase(t, now),
+              t.notifyMinutesBefore ?? DEFAULT_NOTIFY_MINUTES,
+            );
           }
         }
       }
