@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useWorkspace } from "@/workspace/store";
 import { HOTELS, getHotel } from "@/lib/hotels";
+import type { QuoteDoc } from "@/workspace/types";
 import {
   QUOTE_LABELS,
   formatDate,
@@ -239,8 +240,9 @@ const [showRooms, setShowRooms] = useState(false);
 const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set());
 /** History quote id currently awaiting a second tap to confirm deletion. */
  const [confirmingReset, setConfirmingReset] = useState(false);
- const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
- const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
+  const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
+  const [previewQuote, setPreviewQuote] = useState<QuoteDoc | null>(null);
 
   const missingRecipient = showQuoteErrors && !quote.recipient.trim();
   const missingRateIds = useMemo(
@@ -265,6 +267,11 @@ const [collapsedItems, setCollapsedItems] = useState<Set<string>>(() => new Set(
     const stillMissing = !quote.recipient.trim() || missingRateIds.size > 0;
     if (!stillMissing) setShowQuoteErrors(false);
   }, [showQuoteErrors, quote.recipient, missingRateIds, setShowQuoteErrors]);
+
+  // Discard the preview source whenever the preview closes (for any reason).
+  useEffect(() => {
+    if (!showPreview) setPreviewQuote(null);
+  }, [showPreview]);
 
   /**
    * Field-commit change logging. Text inputs update the quote on every
@@ -318,19 +325,29 @@ const toggleItem = (itemId: string) => {
   /** Blob URL of the real generated PDF, rendered by the browser's native viewer. */
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
 
+  // Source quote/hotel/logo for the preview: a history quote when previewing
+  // from history (Eye), otherwise the quote currently in the editor.
+  const previewSourceQuote = previewQuote ?? quote;
+  const previewSourceHotel = previewQuote
+    ? getHotel(previewQuote.hotelId)
+    : selectedHotel;
+  const previewSourceLogo = previewQuote
+    ? (hotelLogos[previewQuote.hotelId] ?? getHotel(previewQuote.hotelId).logoUrl)
+    : logo;
+
   useEffect(() => {
-    if (!showPreview || !selectedHotel) {
+    if (!showPreview || !previewSourceHotel) {
       setPdfBlobUrl(null);
       return;
     }
-    const url = quotePdfPreviewUrl(quote, selectedHotel, logo);
+    const url = quotePdfPreviewUrl(previewSourceQuote, previewSourceHotel, previewSourceLogo);
     setPdfBlobUrl(url);
     return () => {
       URL.revokeObjectURL(url);
     };
     // Se genera SOLO al abrir la vista previa, no en cada cambio de "quote"
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showPreview]);
+  }, [showPreview, previewQuote]);
 
 
   const saveRoomTypes = (types: string[]) => {
@@ -1262,7 +1279,7 @@ const toggleItem = (itemId: string) => {
                   </button>
                   <button
                     onClick={() => {
-                      loadQuote(q.id);
+                      setPreviewQuote(q);
                       onShowPreview?.();
                     }}
                     aria-label={lang === "es" ? "Vista previa de cotización" : "Preview quote"}
